@@ -1,0 +1,1165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ACHDGF Member State Validation Dashboard</title>
+<meta name="description" content="Africa CDC — African Continental Health Data Governance Framework: Member State Validation Dashboard (REDCap CSV import).">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='11' fill='%238C0024'/%3E%3Crect y='11' width='32' height='10' fill='%23C3A466'/%3E%3Crect y='21' width='32' height='11' fill='%2300764B'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --maroon:#8C0024; --maroon-d:#6B001B; --gold:#C3A466; --gold-d:#8F7338; --green:#00764B; --green-d:#005A38;
+  --ink:#201A1C; --muted:#665C61; --line:#E8E1DB; --bg:#F7F4F0; --card:#fff;
+  --v:var(--green); --a:var(--gold); --n:var(--maroon);
+  --v-t:#E3F1EB; --a-t:#F6F0E2; --n-t:#F6E6EA; --m-t:#EFEBE8;
+  --radius:12px; --shadow:0 1px 2px rgba(32,26,28,.06),0 4px 14px rgba(32,26,28,.05);
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;width:100%;min-height:100%}
+body{margin:0;width:100%;min-height:100vh;overflow-x:hidden;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:4px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ---------- header ---------- */
+.hdr{background:linear-gradient(135deg,var(--maroon) 0%,var(--maroon-d) 100%);color:#fff;position:relative}
+.hdr::after{content:"";display:block;height:6px;background:linear-gradient(90deg,var(--maroon) 0 33.3%,var(--gold) 33.3% 66.6%,var(--green) 66.6% 100%)}
+.hdr-in{max-width:2400px;width:100%;margin:0 auto;padding:18px clamp(16px,2.5vw,48px);display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.logo-tile{background:#fff;border-radius:10px;padding:0 6px;display:flex;align-items:center;justify-content:center;min-width:150px;height:84px;flex:0 0 auto;box-shadow:0 2px 8px rgba(0,0,0,.18);overflow:hidden}
+.logo-tile img{height:80px;width:auto;display:block}
+.logo-fallback{display:none;font-weight:800;color:var(--maroon);letter-spacing:.02em;font-size:15px;line-height:1.1;text-align:center}
+.logo-tile.nologo img{display:none}
+.logo-tile.nologo .logo-fallback{display:block}
+.ttl{flex:1 1 380px;min-width:260px;text-align:center;color:#fff}
+.ttl .kicker{font-size:clamp(20px,2.6vw,34px);font-weight:800;color:#fff;line-height:1.2;text-align:center}
+.ttl h1{margin:6px 0 0;font-size:clamp(20px,2vw,28px);line-height:1.15;font-weight:800;letter-spacing:-.01em;color:#fff}
+.ttl .sub{font-size:13px;opacity:.9;font-weight:500}
+.hdr-actions{min-width:150px;justify-content:flex-end;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:600;background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.25)}
+.chip .dot{width:8px;height:8px;border-radius:50%;background:var(--gold)}
+.chip.live .dot{background:#4ADE9B}
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:9px;padding:9px 14px;font-weight:700;font-size:13px;background:var(--gold);color:#201A1C;transition:transform .12s,box-shadow .12s,background .12s}
+.btn:hover{background:#D1B57B;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.btn.sec{background:#fff;color:var(--maroon);border:1px solid var(--line)}
+.btn.sec:hover{background:#FBF7F5}
+.btn.green{background:var(--green);color:#fff}
+.btn.green:hover{background:var(--green-d)}
+.btn.ghost{background:transparent;color:var(--maroon);border:1px solid var(--maroon)}
+.btn.danger{background:var(--maroon);color:#fff}
+.btn.sm{padding:6px 10px;font-size:12px}
+
+.banner{background:var(--a-t);border-bottom:1px solid #E6D9B8;color:#4A3B14}
+.banner-in{max-width:2400px;width:100%;margin:0 auto;padding:9px clamp(16px,2.5vw,48px);display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:13px}
+.banner b{color:var(--maroon)}
+
+/* ---------- nav ---------- */
+.nav{position:-webkit-sticky;position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(32,26,28,.04)}
+.nav-in{max-width:2400px;width:100%;margin:0 auto;padding:0 clamp(16px,2.5vw,48px);display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.tab{border:0;background:none;padding:14px 16px;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap;display:flex;gap:8px;align-items:center}
+.tab:hover{color:var(--maroon)}
+.tab[aria-selected=true]{color:var(--maroon);border-bottom-color:var(--maroon);font-weight:700}
+.tab .cnt{background:var(--m-t);color:var(--muted);border-radius:999px;padding:0 8px;font-size:11px;font-weight:700}
+.tab[aria-selected=true] .cnt{background:var(--n-t);color:var(--maroon)}
+
+main{max-width:2400px;width:100%;margin:0 auto;padding:22px clamp(16px,2.5vw,48px) 60px}
+.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.toolbar .lbl{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.seg{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+.seg button{border:0;background:none;padding:6px 12px;border-radius:7px;font-weight:600;font-size:13px;color:var(--muted)}
+.seg button:hover{color:var(--maroon)}
+.seg button[aria-pressed=true]{background:var(--maroon);color:#fff}
+
+/* ---------- cards & grid ---------- */
+.grid{display:grid;gap:16px;margin-bottom:16px}
+.g5{grid-template-columns:repeat(5,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g-12{grid-template-columns:minmax(0,1fr) minmax(0,1.4fr)}
+.g-21{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+@media(max-width:1100px){.g5{grid-template-columns:repeat(2,minmax(0,1fr))}.g3,.g2,.g-12,.g-21{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){.g5{grid-template-columns:minmax(0,1fr)}main{padding:16px 14px 50px}.hdr-in{padding:14px}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 20px;min-width:0}
+.card h2{margin:0 0 2px;font-size:15px;font-weight:800;letter-spacing:-.005em}
+.card .desc{margin:0 0 14px;color:var(--muted);font-size:12.5px}
+.card-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.q{display:inline-block;background:var(--m-t);color:var(--muted);font-size:10.5px;font-weight:700;border-radius:5px;padding:1px 6px;margin-left:6px;vertical-align:middle;letter-spacing:.04em}
+
+.kpi{position:relative;overflow:hidden;padding-top:20px}
+.kpi::before{content:"";position:absolute;left:0;top:0;right:0;height:5px;background:var(--c,var(--maroon))}
+.kpi .k-l{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.kpi .k-v{font-size:38px;font-weight:800;line-height:1.1;margin:6px 0 2px;color:var(--c,var(--maroon));letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi .k-v small{font-size:16px;font-weight:700;color:var(--muted)}
+.kpi .k-s{font-size:12.5px;color:var(--muted)}
+.kpi .meter{height:6px;border-radius:99px;background:var(--m-t);margin-top:10px;overflow:hidden}
+.kpi .meter i{display:block;height:100%;background:var(--c,var(--maroon));border-radius:99px;transform-origin:left;animation:grow .7s ease-out}
+
+/* ---------- bars ---------- */
+@keyframes grow{from{transform:scaleX(0)}}
+.stack{display:flex;height:26px;border-radius:7px;overflow:hidden;background:var(--m-t)}
+.stack>span{display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;color:#fff;min-width:0;white-space:nowrap;overflow:hidden;transform-origin:left;animation:grow .7s ease-out}
+.stack>.s-v{background:var(--v)}.stack>.s-a{background:var(--a);color:#201A1C}.stack>.s-n{background:var(--n)}
+.stack.thin{height:12px;border-radius:5px}
+.stack.thin>span{font-size:0}
+.sec-row{margin-bottom:14px}
+.sec-row .sr-h{display:flex;justify-content:space-between;font-weight:700;margin-bottom:5px;gap:10px}
+.sec-row .sr-h span:last-child{color:var(--muted);font-weight:600;font-size:12.5px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.lg-v{background:var(--v)}.lg-a{background:var(--a)}.lg-n{background:var(--n)}.lg-m{background:repeating-linear-gradient(45deg,#CFC8C3 0 3px,#EFEBE8 3px 6px)}
+
+.donut-wrap{display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center}
+.donut{position:relative;width:200px;height:200px;flex:0 0 auto}
+.donut svg{display:block;width:100%;height:100%}
+.donut circle.seg-c{transition:stroke-width .15s,opacity .15s;cursor:pointer}
+.donut circle.seg-c:hover{stroke-width:34}
+.donut .mid{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none}
+.donut .mid b{font-size:30px;font-weight:800;color:var(--green);letter-spacing:-.02em;line-height:1}
+.donut .mid span{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-top:4px;max-width:110px}
+.dl{list-style:none;margin:0;padding:0;display:grid;gap:10px;min-width:190px}
+.dl li{display:grid;grid-template-columns:14px 1fr auto;gap:10px;align-items:center}
+.dl i{width:14px;height:14px;border-radius:4px}
+.dl .nm{font-weight:600}
+.dl .vl{font-weight:800;font-variant-numeric:tabular-nums}
+.dl .ct{display:block;font-size:11.5px;color:var(--muted);font-weight:500}
+.note{font-size:12px;color:var(--muted);background:var(--m-t);border-radius:8px;padding:8px 10px;margin-top:12px}
+
+/* scorecard / ranked */
+.sc-row{display:grid;grid-template-columns:34px minmax(0,1.2fr) minmax(90px,1.6fr) 56px 140px;gap:10px;align-items:center;padding:6px 8px;border-radius:8px;border:0;background:none;width:100%;text-align:left}
+.sc-row:hover{background:#FBF8F5}
+.sc-code{font-weight:800;color:var(--maroon);font-size:12.5px}
+.sc-title{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sc-track{position:relative;height:14px;background:var(--m-t);border-radius:7px}
+.sc-fill{height:100%;border-radius:7px;transform-origin:left;animation:grow .7s ease-out}
+.sc-track .mark{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink);opacity:.45}
+.sc-val{font-weight:800;font-size:12.5px;text-align:right;font-variant-numeric:tabular-nums}
+.f-high{background:var(--v)}.f-mid{background:var(--a)}.f-low{background:var(--n)}.f-na{background:#B7AFAA}
+.scale-l{display:grid;grid-template-columns:34px minmax(0,1.2fr) minmax(90px,1.6fr) 56px 140px;gap:10px;padding:0 8px 4px;font-size:10.5px;color:var(--muted);font-weight:700}
+.scale-l .tr{position:relative;height:14px}
+.scale-l .tr span{position:absolute;transform:translateX(-50%);top:0}
+.badge{display:inline-block;text-align:center;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap}
+.b-high{background:var(--v);color:#fff}.b-mid{background:var(--a);color:#201A1C}.b-low{background:var(--n);color:#fff}.b-na{background:var(--m-t);color:var(--muted)}
+.b-dv{background:var(--v-t);color:var(--green-d)}.b-da{background:var(--a-t);color:#6B521A}.b-dn{background:var(--n-t);color:var(--maroon)}
+.rank-row{display:grid;grid-template-columns:22px 34px minmax(0,1fr) 92px;gap:10px;align-items:center;padding:6px 8px;border-radius:8px;border:0;background:none;width:100%;text-align:left}
+.rank-row:hover{background:#FBF8F5}
+.rank-row .pos{color:var(--muted);font-weight:700;font-size:12px}
+.rank-row .rb{height:10px;background:var(--m-t);border-radius:5px;overflow:hidden}
+.rank-row .rb i{display:block;height:100%;border-radius:5px;transform-origin:left;animation:grow .7s ease-out}
+.rank-row .rv{text-align:right;font-weight:800;font-size:12.5px;font-variant-numeric:tabular-nums}
+.rank-row .rv small{display:block;color:var(--muted);font-weight:500;font-size:10.5px}
+.rank-t{display:block;font-size:12px;font-weight:600;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* scatter */
+.scatter{width:100%;height:auto;display:block}
+.scatter text{font-family:inherit}
+.scatter .pt{cursor:pointer;transition:r .12s}
+.scatter .pt:hover{stroke:#201A1C;stroke-width:2}
+
+/* ---------- tables ---------- */
+.tbl-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
+table.t{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
+.t th{position:-webkit-sticky;position:sticky;top:0;background:#FAF6F2;text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap;z-index:2}
+.t th.sortable{cursor:pointer;user-select:none}
+.t th.sortable:hover{color:var(--maroon)}
+.t th .ar{color:var(--maroon)}
+.t td{padding:9px 12px;border-bottom:1px solid #F1ECE7;vertical-align:middle}
+.t tr.row-i{cursor:pointer}
+.t tr.row-i:hover td{background:#FCFAF8}
+.t tr.sub td{background:#FAF6F2;font-weight:800;color:var(--maroon);font-size:12px;letter-spacing:.03em}
+.t tr.tot td{background:var(--maroon);color:#fff;font-weight:800}
+.t tr.tot td .stack{background:rgba(255,255,255,.25)}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.num small{color:var(--muted);font-weight:500;margin-left:4px}
+.tot .num small{color:#F0DCA8}
+.t td .pc-v{color:var(--green-d);font-weight:700}.t td .pc-a{color:#7A5F22;font-weight:700}.t td .pc-n{color:var(--maroon);font-weight:700}
+.codepill{display:inline-block;min-width:30px;text-align:center;font-weight:800;color:var(--maroon);background:var(--n-t);border-radius:6px;padding:1px 7px;font-size:12px}
+
+/* heatmap */
+.hm{border-collapse:separate;border-spacing:3px;font-size:12px}
+.hm th{position:sticky;top:0;background:#fff;z-index:3;font-size:11px;padding:6px 2px;text-align:center;font-weight:800;color:var(--maroon)}
+.hm th.stn,.hm td.stn{position:sticky;left:0;background:#fff;z-index:4;text-align:left;min-width:190px;max-width:220px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hm th.stn{z-index:5}
+.hm td.stn button{border:0;background:none;padding:3px 0;font-weight:600;text-align:left;width:100%;overflow:hidden;text-overflow:ellipsis}
+.hm td.stn button:hover{color:var(--maroon);text-decoration:underline}
+.hm .cell{width:34px;height:30px;border-radius:6px;border:0;font-weight:800;font-size:13px;transition:transform .1s,box-shadow .1s}
+.hm .cell:hover{transform:scale(1.14);box-shadow:0 3px 10px rgba(0,0,0,.25);position:relative;z-index:6}
+.c-V{background:var(--v);color:#fff}.c-A{background:var(--a);color:#201A1C}.c-N{background:var(--n);color:#fff}
+.c-M{background:repeating-linear-gradient(45deg,#D8D1CC 0 3px,#EFEBE8 3px 6px);color:#7A7075}
+.hm td.sum{font-size:11px;color:var(--muted);white-space:nowrap;padding:0 6px}
+.hm-wrap{max-height:72vh;overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fff;padding:6px}
+.search{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 12px;min-width:220px;font-size:13px}
+select.search{min-width:150px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.pill{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600}
+button.pill:hover{border-color:var(--maroon);color:var(--maroon)}
+.pill.v{background:var(--v-t);border-color:#BFDCCF;color:var(--green-d)}
+.pill.a{background:var(--a-t);border-color:#E6D9B8;color:#6B521A}
+.pill.n{background:var(--n-t);border-color:#E7BFC9;color:var(--maroon)}
+.pill.m{background:var(--m-t);color:var(--muted)}
+
+/* comments */
+.cm{border:1px solid var(--line);border-left:5px solid var(--gold);border-radius:10px;padding:12px 14px;background:#fff;margin-bottom:10px}
+.cm.n{border-left-color:var(--maroon)}
+.cm-h{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.cm-h b{font-weight:700}
+.cm p{margin:0;white-space:pre-wrap}
+.cm .tags{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
+.tg{font-size:11px;font-weight:700;background:var(--m-t);color:var(--muted);border-radius:5px;padding:1px 7px}
+.theme-row{display:grid;grid-template-columns:150px minmax(0,1fr) 70px;gap:10px;align-items:center;padding:5px 6px;border-radius:8px;border:0;background:none;width:100%;text-align:left}
+.theme-row:hover,.theme-row[aria-pressed=true]{background:#FBF1F3}
+.theme-row .tb{height:12px;background:var(--m-t);border-radius:6px;overflow:hidden}
+.theme-row .tb i{display:block;height:100%;background:var(--maroon);border-radius:6px;transform-origin:left;animation:grow .7s ease-out}
+.theme-row b{text-align:right;font-variant-numeric:tabular-nums}
+
+/* register */
+.reg-in{width:100%;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:#fff;font-size:12.5px}
+.reg-in:focus{border-color:var(--maroon);outline:none;box-shadow:0 0 0 3px rgba(140,0,36,.12)}
+details.dt summary{cursor:pointer;color:var(--maroon);font-weight:700;font-size:12px}
+details.dt .dt-b{margin-top:6px;font-size:12.5px;display:grid;gap:6px;max-width:460px}
+details.dt .dt-b div{background:var(--m-t);border-radius:7px;padding:6px 9px}
+td.reg-st select{border:1px solid var(--line);border-radius:8px;padding:6px;background:#fff;width:100%}
+
+/* drawer */
+.ov{position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(32,26,28,.45);z-index:60;opacity:0;pointer-events:none;transition:opacity .2s}
+.ov.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(560px,100%);background:#fff;z-index:70;transform:translateX(105%);transition:transform .25s ease;box-shadow:-10px 0 40px rgba(0,0,0,.25);display:flex;flex-direction:column}
+.drawer.on{transform:none}
+.dr-h{background:var(--maroon);color:#fff;padding:16px 20px;display:flex;gap:12px;align-items:flex-start;border-bottom:5px solid var(--gold)}
+.dr-h h3{margin:0;font-size:18px;font-weight:800;line-height:1.25}
+.dr-h .x{margin-left:auto;border:0;background:rgba(255,255,255,.18);color:#fff;border-radius:8px;width:34px;height:34px;font-size:18px;flex:0 0 auto}
+.dr-h .x:hover{background:rgba(255,255,255,.3)}
+.dr-b{padding:18px 20px 30px;overflow:auto;flex:1}
+.dr-b h4{margin:20px 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.mini-k{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+.mini-k div{background:var(--m-t);border-radius:9px;padding:8px 10px;text-align:center}
+.mini-k b{display:block;font-size:20px;font-weight:800}
+.mini-k span{font-size:11px;color:var(--muted);font-weight:600}
+.mini-k .v b{color:var(--green)}.mini-k .a b{color:var(--gold-d)}.mini-k .n b{color:var(--maroon)}
+
+/* drop zone */
+.drop{border:2px dashed #D4C9C0;border-radius:14px;padding:30px 20px;text-align:center;background:#FFFCFA;transition:all .15s}
+.drop.on{border-color:var(--maroon);background:var(--n-t)}
+.drop h3{margin:6px 0;font-size:16px;font-weight:800}
+.drop p{margin:0 0 14px;color:var(--muted)}
+.kv{display:grid;grid-template-columns:200px 1fr;gap:6px 14px;font-size:13px}
+.kv dt{color:var(--muted);font-weight:600}.kv dd{margin:0;font-weight:600}
+.fld{display:grid;gap:4px;font-size:12px;font-weight:700;color:var(--muted)}
+.fld input{border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:110px;font-weight:600;color:var(--ink)}
+.ok{color:var(--green);font-weight:800}.bad{color:var(--maroon);font-weight:800}
+.meth li{margin-bottom:6px}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background:var(--m-t);padding:1px 5px;border-radius:4px}
+
+/* toast + dialog + tooltip */
+#toasts{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:90;display:grid;gap:8px;width:min(560px,92vw)}
+.toast{background:#201A1C;color:#fff;border-radius:10px;padding:11px 14px;box-shadow:0 8px 24px rgba(0,0,0,.3);font-weight:600;border-left:5px solid var(--green);animation:rise .25s}
+.toast.warn{border-left-color:var(--gold)}.toast.error{border-left-color:#FF6B8A}
+@keyframes rise{from{transform:translateY(10px);opacity:0}}
+dialog{border:0;border-radius:14px;padding:22px;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+dialog::backdrop{background:rgba(32,26,28,.5)}
+dialog h3{margin:0 0 8px}
+dialog .row{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+#tip{position:fixed;z-index:100;background:#201A1C;color:#fff;font-size:12px;font-weight:600;padding:6px 9px;border-radius:7px;pointer-events:none;white-space:pre-line;max-width:300px;opacity:0;transition:opacity .08s}
+#tip.on{opacity:1}
+.empty{padding:34px;text-align:center;color:var(--muted)}
+.foot{max-width:2400px;width:100%;margin:0 auto;padding:0 clamp(16px,2.5vw,48px) 40px;color:var(--muted);font-size:12px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{.nav,.hdr-actions,.banner,.toolbar,.btn,#toasts{display:none!important}body{background:#fff}.card{box-shadow:none}.drawer,.ov{display:none}}
+</style>
+</head>
+<body>
+<noscript><div style="padding:30px;font-weight:700">This dashboard needs JavaScript enabled.</div></noscript>
+
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="logo-tile" id="logoTile">
+      <img src="data:image/png;base64,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" alt="Africa CDC" onerror="this.parentNode.classList.add('nologo')">
+      <span class="logo-fallback">Africa<br>CDC</span>
+    </div>
+    <div class="ttl">
+      <div class="kicker">African Continental Health Data Governance Framework (ACHDGF)</div>
+      <h1>Member State Validation Dashboard</h1>
+    </div>
+    <div class="hdr-actions">
+      <span class="chip" id="srcChip"><span class="dot"></span><span id="srcTxt">Loading…</span></span>
+      <button class="btn" data-act="pick">⬆ Import REDCap CSV</button>
+    </div>
+  </div>
+</header>
+<div id="banner"></div>
+
+<nav class="nav" aria-label="Dashboard sections"><div class="nav-in" id="tabs" role="tablist"></div></nav>
+<main id="view" tabindex="-1"></main>
+<div class="foot" id="foot"></div>
+
+<input type="file" id="file" accept=".csv,text/csv" class="sr" aria-label="Import REDCap CSV export">
+<div class="ov" id="ov" data-act="closeDrawer"></div>
+<aside class="drawer" id="drawer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Details"></aside>
+<div id="toasts" aria-live="polite"></div>
+<dialog id="dlg"></dialog>
+<div id="tip"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* =====================================================================
+   0. Static definitions (mirror the REDCap data dictionary
+      "achdgf_member_state_validation")
+   ===================================================================== */
+const SAMPLE_CSV = "record_id,redcap_survey_identifier,achdgf_member_state_validation_timestamp,member_state,delegation,workshop_date,p1_status,p1_amend,p2_status,p2_amend,p3_status,p3_amend,p4_status,p4_amend,p5_status,p5_amend,d1_status,d1_amend,d2_status,d2_amend,d3_status,d3_amend,d4_status,d4_amend,d5_status,d5_amend,d6_status,d6_amend,d7_status,d7_amend,c1_status,c1_amend,c2_status,c2_amend,c3_status,c3_amend,c4_status,c4_amend,c5_status,c5_amend,overall_observations,country_rationale,achdgf_member_state_validation_complete\n1,,2026-10-21 11:16:46,35,\"Permanent Secretary, Ministry of Health\",2026-10-22,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,,,2\n2,,2026-10-22 10:20:31,25,Director of Digital Health,2026-10-22,1,,1,,1,,1,,1,,2,The governance approach for emerging technologies is not sufficiently adaptable; add a periodic review mechanism.,1,,1,,1,,1,,2,Proportionate enforcement should be defined; sanctions regime must respect national administrative law.,1,,2,Merge overlapping principles and ensure consistent terminology across the 12 principles.,1,,2,Access to national data must require explicit written authorisation from the national authority; strengthen wording.,1,,1,,Proposal to add a dedicated provision on AI governance across D1 and D5.,Constitutional requirements on parliamentary approval of international instruments apply in our country.,2\n3,,2026-10-21 17:42:32,38,Data Protection Commissioner delegate,2026-10-22,2,Clarify that sovereignty applies equally to data processed by third-party cloud providers hosted outside the territory.,1,,1,,2,Add community engagement and consent safeguards for vulnerable populations.,3,Minimum conditions for cross-border exchange should include a bilateral data sharing agreement template.,1,,2,\"Clarify the coordination mandate between the ministry of health, ICT regulator and data protection authority.\",1,,1,,2,Add provisions on lawful basis for processing in public health emergencies.,1,,1,,1,,1,,1,,1,,2,Add an annual review cycle and a clear baseline year for monitoring and evaluation.,,Constitutional requirements on parliamentary approval of international instruments apply in our country.,2\n4,,2026-10-22 13:17:27,1,\"Director General, National Public Health Institute\",2026-10-21,1,,1,,1,,1,,1,,2,Add guidance on regulatory sandboxes for digital health innovation.,1,,1,,2,Multi-level coordination wording is unclear on funding and resourcing of coordination secretariats.,1,,1,,1,,1,,1,,1,,1,,2,Add an annual review cycle and a clear baseline year for monitoring and evaluation.,,Position consolidated after a national consultation with civil society and the private sector.,2\n5,,2026-10-21 10:31:49,54,Chief Informatics Officer,2026-10-22,1,,1,,2,\"Lifecycle model should specify retention and deletion obligations, including for archived registries.\",2,Include a public communication and transparency obligation on how health data is collected and reused.,2,The policy conditions are too prescriptive for countries still developing their cross-border exchange regimes.,1,,1,,2,Minimum confidentiality safeguards should address secondary use of data for research and commercial purposes.,1,,1,,2,Reporting obligations for private actors should be streamlined to avoid duplication with existing audits.,1,,1,,1,,2,Clarify the legal basis and mandate of Africa CDC vis-a-vis RECs and national public health institutes.,1,,1,,Proposal to add a dedicated provision on AI governance across D1 and D5.,Strong support for the federated approach given our experience with cross-border surveillance.,2\n6,,2026-10-21 16:48:14,26,Director of Digital Health,2026-10-22,1,,1,,1,,1,,2,Clarify reciprocity: what happens where a partner country lacks equivalent privacy and data protection safeguards?,1,,2,Roles at regional level (RECs) need to be defined more precisely to avoid duplicated reporting lines.,1,,1,,1,,2,Add independent compliance monitoring and annual public reporting on audit outcomes.,1,,1,,2,Federated model needs a clear technical specification of which governed data products may be shared and under which conditions.,3,The facilitation mandate should be limited to technical guidance; remove references to agreed monitoring without prior consent.,1,,1,,,Capacity constraints in cybersecurity and legal drafting remain the main country consideration.,2\n7,,2026-10-22 14:47:31,21,Head of Health Information Systems,2026-10-21,1,,1,,1,,1,,2,Minimum conditions for cross-border exchange should include a bilateral data sharing agreement template.,1,,2,Roles at regional level (RECs) need to be defined more precisely to avoid duplicated reporting lines.,2,Minimum confidentiality safeguards should address secondary use of data for research and commercial purposes.,1,,2,Some enforceable duties conflict with our constitution on powers of the national assembly; propose an alternative formulation.,1,,1,,1,,2,Federated model needs a clear technical specification of which governed data products may be shared and under which conditions.,1,,1,,2,Add an annual review cycle and a clear baseline year for monitoring and evaluation.,,The position is preliminary and will be confirmed by cabinet after the workshop.,2\n8,,2026-10-21 12:26:11,41,\"Head of ICT, Ministry of Health\",2026-10-22,1,,1,,1,,1,,1,,,,1,,2,Add explicit redress and complaint-handling mechanisms for individuals whose health data rights are violated.,3,Add the private sector and civil society explicitly in the accountable participation mechanism.,3,The legal and ethical safeguards for cross-border activity require further national consultation before validation.,1,,1,,1,,,,1,,1,,1,,,,1\n9,,2026-10-21 09:26:35,42,Director of Digital Health,2026-10-22,1,,,,,,1,,,,,,1,,2,Minimum confidentiality safeguards should address secondary use of data for research and commercial purposes.,1,,1,,,,,,,,1,,1,,1,,1,,,,1\n10,,2026-10-21 10:53:13,42,\"Permanent Secretary, Ministry of Health\",2026-10-21,1,,1,,2,Distinguish more clearly between data stewardship and data custodianship roles and who designates them in each country.,1,,1,,2,Genomic data should be treated as a specific category of sensitive data with additional consent requirements.,1,,1,,1,,2,Dispositions juridiques minimales: prévoir une période transitoire pour l'adoption des lois nationales.,2,Add independent compliance monitoring and annual public reporting on audit outcomes.,1,,1,,2,Federated model needs a clear technical specification of which governed data products may be shared and under which conditions.,1,,1,,2,Indicators should be agreed collaboratively and reporting frequency made proportionate to national capacity.,,,2\n11,,2026-10-21 10:18:52,15,\"Director General, National Public Health Institute\",2026-10-21,3,Add an explicit reference to national data protection and health laws as the primary basis for lawful cross-border transfer.,1,,2,\"Lifecycle model should specify retention and deletion obligations, including for archived registries.\",1,,1,,1,,1,,1,,1,,1,,2,Add independent compliance monitoring and annual public reporting on audit outcomes.,1,,1,,3,Clarify that no routine transfer of identifiable data includes exceptions for outbreak response and surveillance.,1,,1,,1,,,Strong support for the federated approach given our experience with cross-border surveillance.,2\n12,,2026-10-21 17:18:15,31,Director of Planning and Policy,2026-10-22,,,1,,1,,1,,1,,,,3,\"Clarify the coordination mandate between the ministry of health, ICT regulator and data protection authority.\",1,,3,Add the private sector and civil society explicitly in the accountable participation mechanism.,3,The legal and ethical safeguards for cross-border activity require further national consultation before validation.,3,Proportionate enforcement should be defined; sanctions regime must respect national administrative law.,3,Include sustainable financing of capacity building and retention of skilled informatics and legal staff.,1,,1,,3,Not validated pending clarification of governance accountability of Africa CDC to Member States.,1,,1,,,The position is preliminary and will be confirmed by cabinet after the workshop.,1\n13,,2026-10-21 10:27:19,50,Chief Informatics Officer,2026-10-21,1,,1,,2,\"Lifecycle model should specify retention and deletion obligations, including for archived registries.\",2,Add community engagement and consent safeguards for vulnerable populations.,3,Clarify reciprocity: what happens where a partner country lacks equivalent privacy and data protection safeguards?,1,,1,,3,Minimum confidentiality safeguards should address secondary use of data for research and commercial purposes.,3,Add the private sector and civil society explicitly in the accountable participation mechanism.,1,,2,Proportionate enforcement should be defined; sanctions regime must respect national administrative law.,1,,1,,3,Clarify that no routine transfer of identifiable data includes exceptions for outbreak response and surveillance.,2,Clarify the legal basis and mandate of Africa CDC vis-a-vis RECs and national public health institutes.,1,,1,,Request plenary discussion on the mandate of Africa CDC regarding access to national data (C3).,,2\n14,,2026-10-21 12:53:59,44,Chief Informatics Officer,2026-10-21,1,,1,,1,,1,,1,,2,Add guidance on regulatory sandboxes for digital health innovation.,2,Allow Member States to designate existing authorities instead of creating new competent bodies.,1,,2,Avoid creating parallel structures: use existing national health data coordination committees.,3,Add provisions on lawful basis for processing in public health emergencies.,1,,2,Include sustainable financing of capacity building and retention of skilled informatics and legal staff.,1,,1,,1,,1,,1,,,Data localisation rules in force nationally need to be reflected in the Framework text.,2\n15,,2026-10-21 17:27:46,52,Chief Informatics Officer,2026-10-22,2,Clarify that sovereignty applies equally to data processed by third-party cloud providers hosted outside the territory.,1,,2,Distinguish more clearly between data stewardship and data custodianship roles and who designates them in each country.,1,,1,,2,AI governance needs a stronger risk-based classification and human oversight requirement for high-risk health uses.,2,Allow Member States to designate existing authorities instead of creating new competent bodies.,1,,2,Avoid creating parallel structures: use existing national health data coordination committees.,3,Add provisions on lawful basis for processing in public health emergencies.,1,,2,Include sustainable financing of capacity building and retention of skilled informatics and legal staff.,1,,1,,1,,1,,2,Add an annual review cycle and a clear baseline year for monitoring and evaluation.,,,2\n16,,2026-10-21 14:55:13,46,Chief Informatics Officer,2026-10-21,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,2,The facilitation mandate should be limited to technical guidance; remove references to agreed monitoring without prior consent.,1,,1,,Plenary should resolve the tension between sovereignty (P1) and the regional and international obligations clause.,Capacity constraints in cybersecurity and legal drafting remain the main country consideration.,2\n17,,2026-10-22 10:20:12,2,Head of Health Information Systems,2026-10-21,1,,1,,2,Add data quality assurance responsibilities and audit expectations for significant national datasets.,1,,2,The policy conditions are too prescriptive for countries still developing their cross-border exchange regimes.,1,,1,,2,Minimum confidentiality safeguards should address secondary use of data for research and commercial purposes.,1,,2,Add provisions on lawful basis for processing in public health emergencies.,1,,1,,3,Merge overlapping principles and ensure consistent terminology across the 12 principles.,3,Clarify that no routine transfer of identifiable data includes exceptions for outbreak response and surveillance.,1,,1,,1,,,The position is preliminary and will be confirmed by cabinet after the workshop.,2\n18,,2026-10-21 10:42:43,4,Data Protection Commissioner delegate,2026-10-22,1,,2,Define a realistic timeline for progressive adoption of interoperability standards and recognise differing national maturity.,1,,1,,3,Minimum conditions for cross-border exchange should include a bilateral data sharing agreement template.,1,,1,,1,,1,,2,Minimum legal provisions must be adaptable to common-law and civil-law systems; current wording assumes a single model.,2,Reporting obligations for private actors should be streamlined to avoid duplication with existing audits.,1,,2,Merge overlapping principles and ensure consistent terminology across the 12 principles.,2,We cannot validate: the language on authorised continental collaboration may enable de facto centralisation.,2,Not validated pending clarification of governance accountability of Africa CDC to Member States.,1,,1,,,,2\n19,,2026-10-22 12:16:19,53,\"Director General, National Public Health Institute\",2026-10-22,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,Need clarity on how the Framework will be domesticated and who monitors compliance after adoption.,Position consolidated after a national consultation with civil society and the private sector.,2\n20,,2026-10-21 11:58:24,39,\"Head of ICT, Ministry of Health\",2026-10-22,2,We cannot validate in current form: the wording on 'regional and international obligations' could limit national legal discretion.,1,,1,,1,,1,,3,Add guidance on regulatory sandboxes for digital health innovation.,2,\"Clarify the coordination mandate between the ministry of health, ICT regulator and data protection authority.\",1,,1,,1,,1,,1,,1,,1,,2,Not validated pending clarification of governance accountability of Africa CDC to Member States.,1,,1,,,,2\n21,,2026-10-21 16:55:57,8,\"Director General, National Public Health Institute\",2026-10-22,1,,1,,1,,2,Add community engagement and consent safeguards for vulnerable populations.,3,Minimum conditions for cross-border exchange should include a bilateral data sharing agreement template.,2,Add guidance on regulatory sandboxes for digital health innovation.,1,,1,,1,,3,Some enforceable duties conflict with our constitution on powers of the national assembly; propose an alternative formulation.,1,,1,,1,,2,Federated model needs a clear technical specification of which governed data products may be shared and under which conditions.,3,Clarify the legal basis and mandate of Africa CDC vis-a-vis RECs and national public health institutes.,1,,2,Add an annual review cycle and a clear baseline year for monitoring and evaluation.,,,2\n22,,2026-10-22 11:45:28,30,\"Director General, National Public Health Institute\",2026-10-21,1,,1,,1,,1,,2,Clarify reciprocity: what happens where a partner country lacks equivalent privacy and data protection safeguards?,2,Add guidance on regulatory sandboxes for digital health innovation.,2,Roles at regional level (RECs) need to be defined more precisely to avoid duplicated reporting lines.,1,,1,,2,Minimum legal provisions must be adaptable to common-law and civil-law systems; current wording assumes a single model.,1,,1,,1,,1,,1,,1,,1,,,Implementation will depend on available financing for infrastructure and workforce.,2\n23,,2026-10-22 15:35:47,27,\"Permanent Secretary, Ministry of Health\",2026-10-22,1,,2,Reference HL7 FHIR and OpenHIE explicitly as the preferred exchange standards for the continental architecture.,1,,3,Add community engagement and consent safeguards for vulnerable populations.,3,The policy conditions are too prescriptive for countries still developing their cross-border exchange regimes.,2,The governance approach for emerging technologies is not sufficiently adaptable; add a periodic review mechanism.,1,,1,,2,Add the private sector and civil society explicitly in the accountable participation mechanism.,1,,1,,1,,1,,2,L'approche fédérée doit préciser le rôle des architectures nationales d'interopérabilité existantes.,3,Access to national data must require explicit written authorisation from the national authority; strengthen wording.,1,,1,,,,2\n24,,2026-10-22 12:39:34,6,Chief Informatics Officer,2026-10-22,1,,1,,1,,2,Add community engagement and consent safeguards for vulnerable populations.,1,,1,,2,Allow Member States to designate existing authorities instead of creating new competent bodies.,2,Add explicit redress and complaint-handling mechanisms for individuals whose health data rights are violated.,1,,2,Some enforceable duties conflict with our constitution on powers of the national assembly; propose an alternative formulation.,1,,1,,2,\"Balance between rights, public value and health security should be made explicit in the preamble text.\",3,Federated model needs a clear technical specification of which governed data products may be shared and under which conditions.,1,,2,The architecture should show how community and facility level systems connect without parallel reporting channels.,1,,,Strong support for the federated approach given our experience with cross-border surveillance.,2\n25,,2026-10-21 17:11:43,7,\"Director General, National Public Health Institute\",2026-10-21,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,,Constitutional requirements on parliamentary approval of international instruments apply in our country.,2\n26,,2026-10-21 09:37:41,10,Chief Informatics Officer,2026-10-21,,,1,,,,,,2,Les conditions techniques minimales doivent tenir compte des capacités d'infrastructure limitées de certains États membres.,2,The governance approach for emerging technologies is not sufficiently adaptable; add a periodic review mechanism.,1,,2,Minimum confidentiality safeguards should address secondary use of data for research and commercial purposes.,3,Add the private sector and civil society explicitly in the accountable participation mechanism.,2,Some enforceable duties conflict with our constitution on powers of the national assembly; propose an alternative formulation.,3,Reporting obligations for private actors should be streamlined to avoid duplication with existing audits.,,,1,,,,3,Access to national data must require explicit written authorisation from the national authority; strengthen wording.,2,Add security and authentication requirements at each interoperability layer of the architecture.,,,,Constitutional requirements on parliamentary approval of international instruments apply in our country.,1\n27,,2026-10-21 15:48:56,10,\"Director General, National Public Health Institute\",2026-10-22,2,We cannot validate in current form: the wording on 'regional and international obligations' could limit national legal discretion.,1,,1,,1,,1,,2,Genomic data should be treated as a specific category of sensitive data with additional consent requirements.,2,Allow Member States to designate existing authorities instead of creating new competent bodies.,1,,3,Multi-level coordination wording is unclear on funding and resourcing of coordination secretariats.,2,Some enforceable duties conflict with our constitution on powers of the national assembly; propose an alternative formulation.,2,Reporting obligations for private actors should be streamlined to avoid duplication with existing audits.,1,,1,,1,,1,,1,,1,,,,2\n28,,2026-10-22 14:56:35,51,\"Legal Adviser, Ministry of Health\",2026-10-21,2,Add an explicit reference to national data protection and health laws as the primary basis for lawful cross-border transfer.,1,,1,,1,,1,,1,,1,,2,Minimum confidentiality safeguards should address secondary use of data for research and commercial purposes.,1,,1,,1,,1,,1,,1,,1,,1,,2,Add an annual review cycle and a clear baseline year for monitoring and evaluation.,,,2\n29,,2026-10-21 17:43:22,28,\"Director General, National Public Health Institute\",2026-10-22,1,,1,,3,Distinguish more clearly between data stewardship and data custodianship roles and who designates them in each country.,1,,1,,2,The governance approach for emerging technologies is not sufficiently adaptable; add a periodic review mechanism.,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,,,2\n30,,2026-10-22 13:56:49,22,Director of Digital Health,2026-10-22,3,Add an explicit reference to national data protection and health laws as the primary basis for lawful cross-border transfer.,1,,1,,1,,3,Clarify reciprocity: what happens where a partner country lacks equivalent privacy and data protection safeguards?,3,AI governance needs a stronger risk-based classification and human oversight requirement for high-risk health uses.,1,,1,,1,,1,,1,,1,,1,,3,L'approche fédérée doit préciser le rôle des architectures nationales d'interopérabilité existantes.,1,,1,,1,,,Our national health data law is under revision; some provisions will need alignment before domestication.,2\n31,,2026-10-21 17:27:49,9,\"Permanent Secretary, Ministry of Health\",2026-10-22,3,We cannot validate in current form: the wording on 'regional and international obligations' could limit national legal discretion.,1,,1,,1,,2,The policy conditions are too prescriptive for countries still developing their cross-border exchange regimes.,1,,1,,1,,2,Add the private sector and civil society explicitly in the accountable participation mechanism.,2,Add provisions on lawful basis for processing in public health emergencies.,1,,1,,1,,2,Clarify that no routine transfer of identifiable data includes exceptions for outbreak response and surveillance.,1,,2,Add security and authentication requirements at each interoperability layer of the architecture.,1,,Request plenary discussion on the mandate of Africa CDC regarding access to national data (C3).,Strong support for the federated approach given our experience with cross-border surveillance.,2\n32,,2026-10-21 16:38:51,43,Data Protection Commissioner delegate,2026-10-21,1,,1,,3,Distinguish more clearly between data stewardship and data custodianship roles and who designates them in each country.,1,,2,Les conditions techniques minimales doivent tenir compte des capacités d'infrastructure limitées de certains États membres.,2,Genomic data should be treated as a specific category of sensitive data with additional consent requirements.,1,,1,,2,Avoid creating parallel structures: use existing national health data coordination committees.,2,Minimum legal provisions must be adaptable to common-law and civil-law systems; current wording assumes a single model.,1,,1,,1,,3,Federated model needs a clear technical specification of which governed data products may be shared and under which conditions.,1,,2,The architecture should show how community and facility level systems connect without parallel reporting channels.,2,Add an annual review cycle and a clear baseline year for monitoring and evaluation.,,Capacity constraints in cybersecurity and legal drafting remain the main country consideration.,2\n33,,2026-10-22 16:35:26,33,\"Director General, National Public Health Institute\",2026-10-21,1,,2,Reference HL7 FHIR and OpenHIE explicitly as the preferred exchange standards for the continental architecture.,1,,1,,1,,1,,1,,1,,1,,2,Dispositions juridiques minimales: prévoir une période transitoire pour l'adoption des lois nationales.,2,Reporting obligations for private actors should be streamlined to avoid duplication with existing audits.,1,,1,,3,Clarify that no routine transfer of identifiable data includes exceptions for outbreak response and surveillance.,1,,2,Add security and authentication requirements at each interoperability layer of the architecture.,2,Add an annual review cycle and a clear baseline year for monitoring and evaluation.,,,2\n34,,2026-10-21 10:55:40,5,\"Permanent Secretary, Ministry of Health\",2026-10-22,1,,1,,1,,2,Include a public communication and transparency obligation on how health data is collected and reused.,3,Les conditions techniques minimales doivent tenir compte des capacités d'infrastructure limitées de certains États membres.,1,,2,\"Clarify the coordination mandate between the ministry of health, ICT regulator and data protection authority.\",2,Minimum confidentiality safeguards should address secondary use of data for research and commercial purposes.,1,,2,Add provisions on lawful basis for processing in public health emergencies.,1,,2,Add a regional training and peer-learning mechanism coordinated by Africa CDC.,3,\"Balance between rights, public value and health security should be made explicit in the preamble text.\",2,Clarify that no routine transfer of identifiable data includes exceptions for outbreak response and surveillance.,2,Access to national data must require explicit written authorisation from the national authority; strengthen wording.,1,,1,,,,2\n35,,2026-10-21 13:10:57,24,Director of Planning and Policy,2026-10-21,1,,1,,1,,1,,1,,1,,1,,1,,2,Add the private sector and civil society explicitly in the accountable participation mechanism.,2,Some enforceable duties conflict with our constitution on powers of the national assembly; propose an alternative formulation.,1,,1,,2,\"Balance between rights, public value and health security should be made explicit in the preamble text.\",3,We cannot validate: the language on authorised continental collaboration may enable de facto centralisation.,1,,1,,2,Add an annual review cycle and a clear baseline year for monitoring and evaluation.,,The position is preliminary and will be confirmed by cabinet after the workshop.,2\n36,,2026-10-21 15:50:17,37,\"Permanent Secretary, Ministry of Health\",2026-10-21,3,Add an explicit reference to national data protection and health laws as the primary basis for lawful cross-border transfer.,1,,1,,1,,1,,2,AI governance needs a stronger risk-based classification and human oversight requirement for high-risk health uses.,1,,2,Minimum confidentiality safeguards should address secondary use of data for research and commercial purposes.,2,Multi-level coordination wording is unclear on funding and resourcing of coordination secretariats.,1,,1,,1,,1,,1,,2,Access to national data must require explicit written authorisation from the national authority; strengthen wording.,1,,1,,,\"Validation reflects the consolidated position of the Ministry of Health, the ICT ministry and the data protection authority.\",2\n37,,2026-10-21 17:36:20,49,Data Protection Commissioner delegate,2026-10-21,1,,1,,2,Add data quality assurance responsibilities and audit expectations for significant national datasets.,1,,3,Minimum conditions for cross-border exchange should include a bilateral data sharing agreement template.,1,,2,\"Clarify the coordination mandate between the ministry of health, ICT regulator and data protection authority.\",1,,3,Multi-level coordination wording is unclear on funding and resourcing of coordination secretariats.,1,,1,,1,,2,\"Balance between rights, public value and health security should be made explicit in the preamble text.\",2,Clarify that no routine transfer of identifiable data includes exceptions for outbreak response and surveillance.,2,Not validated pending clarification of governance accountability of Africa CDC to Member States.,1,,1,,Proposal to add a dedicated provision on AI governance across D1 and D5.,,2\n38,,2026-10-21 10:40:49,40,Director of Planning and Policy,2026-10-22,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,Request that the revised text is circulated at least 30 days before submission to the AU Summit in February 2027.,,2\n39,,2026-10-22 10:44:33,29,Director of Planning and Policy,2026-10-21,1,,2,Define a realistic timeline for progressive adoption of interoperability standards and recognise differing national maturity.,2,Add data quality assurance responsibilities and audit expectations for significant national datasets.,1,,1,,2,The governance approach for emerging technologies is not sufficiently adaptable; add a periodic review mechanism.,3,\"Clarify the coordination mandate between the ministry of health, ICT regulator and data protection authority.\",2,Minimum confidentiality safeguards should address secondary use of data for research and commercial purposes.,2,Multi-level coordination wording is unclear on funding and resourcing of coordination secretariats.,1,,1,,3,Add a regional training and peer-learning mechanism coordinated by Africa CDC.,1,,1,,1,,1,,1,,Technical working group needed on the federated architecture specification (C2) and interoperability standards (P2).,The position is preliminary and will be confirmed by cabinet after the workshop.,2\n40,,2026-10-21 12:17:52,20,\"Director General, National Public Health Institute\",2026-10-22,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,1,,,,2\n41,,2026-10-22 15:43:19,34,Data Protection Commissioner delegate,2026-10-22,3,Clarifier la notion de juridiction applicable lorsque les données sont traitées par des prestataires étrangers.,,,1,,2,Include a public communication and transparency obligation on how health data is collected and reused.,1,,2,The governance approach for emerging technologies is not sufficiently adaptable; add a periodic review mechanism.,2,Allow Member States to designate existing authorities instead of creating new competent bodies.,1,,2,Avoid creating parallel structures: use existing national health data coordination committees.,1,,2,Add independent compliance monitoring and annual public reporting on audit outcomes.,1,,1,,,,2,Not validated pending clarification of governance accountability of Africa CDC to Member States.,1,,1,,,,1\n42,,2026-10-21 10:48:36,55,\"Head of ICT, Ministry of Health\",2026-10-21,2,Clarify that sovereignty applies equally to data processed by third-party cloud providers hosted outside the territory.,1,,2,\"Lifecycle model should specify retention and deletion obligations, including for archived registries.\",1,,3,Minimum conditions for cross-border exchange should include a bilateral data sharing agreement template.,1,,2,\"Clarify the coordination mandate between the ministry of health, ICT regulator and data protection authority.\",1,,3,Multi-level coordination wording is unclear on funding and resourcing of coordination secretariats.,3,Add provisions on lawful basis for processing in public health emergencies.,1,,1,,2,Merge overlapping principles and ensure consistent terminology across the 12 principles.,1,,3,The facilitation mandate should be limited to technical guidance; remove references to agreed monitoring without prior consent.,1,,1,,,Strong support for the federated approach given our experience with cross-border surveillance.,2\n43,,2026-10-21 15:15:24,16,\"Head of ICT, Ministry of Health\",2026-10-21,1,,1,,1,,1,,2,Minimum conditions for cross-border exchange should include a bilateral data sharing agreement template.,1,,1,,1,,1,,2,The legal and ethical safeguards for cross-border activity require further national consultation before validation.,1,,1,,1,,1,,3,Not validated pending clarification of governance accountability of Africa CDC to Member States.,2,Add security and authentication requirements at each interoperability layer of the architecture.,1,,,,2\n";
+
+const SECTIONS = {
+  P: { name: 'Strategic Pillars',                 short: 'Pillars',     range: 'P1–P5' },
+  D: { name: 'National Implementation Domains',   short: 'Domains',     range: 'D1–D7' },
+  C: { name: 'Continental Strategic Provisions',  short: 'Continental', range: 'C1–C5' }
+};
+const ITEMS = [
+  ['P1','National Data Sovereignty'],['P2','Trusted Interoperability'],['P3','Responsible Data Stewardship'],
+  ['P4','Public Trust'],['P5','Continental Collaboration'],
+  ['D1','Innovation Digital Health and Emerging Technologies'],['D2','Governance Structures and Roles'],
+  ['D3','Privacy Confidentiality and Data Rights'],['D4','Multi Sectoral Collaboration and Coordination'],
+  ['D5','Core National Legal and Ethical Provisions'],['D6','Accountability and Compliance'],
+  ['D7','Capacity Building and Workforce Development'],
+  ['C1','Continental Governance Principles'],['C2','Federated Continental Health Data Architecture'],
+  ['C3','Africa CDC Continental Facilitation Mandate'],['C4','Continental Health Data Governance Architecture'],
+  ['C5','Continental Monitoring, Evaluation and Reporting']
+].map(([code,title],i)=>({code,title,sec:code[0],order:i,col:code.toLowerCase()}));
+const ITEM = Object.fromEntries(ITEMS.map(i=>[i.code,i]));
+
+const STATES = ["Algeria","Angola","Benin","Botswana","Burkina Faso","Burundi","Cabo Verde","Cameroon",
+ "Central African Republic","Chad","Comoros","Congo, Republic of the","Congo, Democratic Republic of the",
+ "Côte d'Ivoire","Djibouti","Egypt","Equatorial Guinea","Eritrea","Eswatini","Ethiopia","Gabon","Gambia","Ghana",
+ "Guinea","Guinea-Bissau","Kenya","Lesotho","Liberia","Libya","Madagascar","Malawi","Mali","Mauritania","Mauritius",
+ "Morocco","Mozambique","Namibia","Niger","Nigeria","Rwanda","Sahrawi Arab Democratic Republic",
+ "São Tomé and Príncipe","Senegal","Seychelles","Sierra Leone","Somalia","South Africa","South Sudan","Sudan",
+ "Tanzania","Togo","Tunisia","Uganda","Zambia","Zimbabwe"];
+const STATES_FR = ["Algérie","Angola","Bénin","Botswana","Burkina Faso","Burundi","Cap-Vert","Cameroun",
+ "République centrafricaine","Tchad","Comores","Congo (République du)","République démocratique du Congo",
+ "Côte d'Ivoire","Djibouti","Égypte","Guinée équatoriale","Érythrée","Eswatini","Éthiopie","Gabon","Gambie","Ghana",
+ "Guinée","Guinée-Bissau","Kenya","Lesotho","Libéria","Libye","Madagascar","Malawi","Mali","Mauritanie","Maurice",
+ "Maroc","Mozambique","Namibie","Niger","Nigeria","Rwanda","République arabe sahraouie démocratique",
+ "Sao Tomé-et-Principe","Sénégal","Seychelles","Sierra Leone","Somalie","Afrique du Sud","Soudan du Sud","Soudan",
+ "Tanzanie","Togo","Tunisie","Ouganda","Zambie","Zimbabwe"];
+
+const norm = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();
+const STATE_BY_NORM = new Map();
+STATES.forEach((n,i)=>{ STATE_BY_NORM.set(norm(n), n); STATE_BY_NORM.set(norm(STATES_FR[i]), n); });
+Object.entries({
+  'drc':'Congo, Democratic Republic of the','dr congo':'Congo, Democratic Republic of the',
+  'democratic republic of the congo':'Congo, Democratic Republic of the','democratic republic of congo':'Congo, Democratic Republic of the',
+  'republic of the congo':'Congo, Republic of the','congo brazzaville':'Congo, Republic of the','congo':'Congo, Republic of the',
+  'ivory coast':"Côte d'Ivoire",'cote d ivoire':"Côte d'Ivoire",'cape verde':'Cabo Verde','swaziland':'Eswatini',
+  'sao tome and principe':'São Tomé and Príncipe','sahrawi republic':'Sahrawi Arab Democratic Republic',
+  'gambia the':'Gambia','the gambia':'Gambia','united republic of tanzania':'Tanzania'
+}).forEach(([k,v])=>STATE_BY_NORM.set(k,v));
+
+const DEC = {
+  V: { key:'V', label:'Validated',               short:'Validated',      color:'var(--v)', glyph:'✓', cls:'v' },
+  A: { key:'A', label:'Validated with amendment', short:'With amendment', color:'var(--a)', glyph:'±', cls:'a' },
+  N: { key:'N', label:'Not validated',            short:'Not validated',  color:'var(--n)', glyph:'✕', cls:'n' }
+};
+const CLS = {
+  high:{ label:'High consensus',        badge:'High consensus',      fill:'f-high', b:'b-high' },
+  mid: { label:'Substantial support',   badge:'Substantial support', fill:'f-mid',  b:'b-mid'  },
+  low: { label:'Further consultation',  badge:'Further consultation',fill:'f-low',  b:'b-low'  },
+  na:  { label:'No decisions',          badge:'No decisions',        fill:'f-na',   b:'b-na'   }
+};
+
+const THEMES = [
+  { id:'legal',          label:'Legal',                kw:['law','legal','legislat','constitution','statut','regulat','jurisdiction','sanction','enforce','court','juridi','loi ','lois','legisl','reglement','droit'] },
+  { id:'policy',         label:'Policy',               kw:['policy','policies','strategy','strategic','political','politique','strateg','national plan'] },
+  { id:'governance',     label:'Governance',           kw:['governance','authority','authorities','mandate','coordinat','oversight','steward','custodian','accountab','gouvernance','autorite','mandat','responsabilite','committee'] },
+  { id:'architecture',   label:'Technical architecture',kw:['architecture','federat','specification','cloud','infrastructure','layer','centralis','centraliz','platform','plateforme','decentral'] },
+  { id:'interoperability',label:'Interoperability',    kw:['interoperab','fhir','hl7','openhie','exchange standard','echange','data exchange','information exchange'] },
+  { id:'privacy',        label:'Privacy & security',   kw:['privacy','confidential','consent','security','cyber','data protection','redress','encrypt','authentication','vie privee','confidentialite','securite','consentement','protection des donnees'] },
+  { id:'implementation', label:'Implementation',       kw:['implement','timeline','transition','capacity','financ','resourc','funding','domesticat','phased','mise en oeuvre','periode transitoire','capacite','financement','ressources','retention'] },
+  { id:'editorial',      label:'Editorial',            kw:['wording','clarif','terminology','definition','define ','merge','preamble','reword','formulation','redaction','terminologie','preciser','overlap'] }
+];
+
+/* =====================================================================
+   1. Storage (localStorage with in-memory fallback)
+   ===================================================================== */
+const MEM = {};
+const LS = {
+  get(k){ try { return localStorage.getItem(k); } catch(e){ return MEM[k] ?? null; } },
+  set(k,v){ try { localStorage.setItem(k,v); return true; } catch(e){ MEM[k]=v; return false; } },
+  del(k){ try { localStorage.removeItem(k); } catch(e){} delete MEM[k]; }
+};
+const K = { data:'achdgf.dash.v1.data', settings:'achdgf.dash.v1.settings', register:'achdgf.dash.v1.register', ui:'achdgf.dash.v1.ui' };
+const jget = (k,d) => { try { const v = LS.get(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } };
+
+/* =====================================================================
+   2. State
+   ===================================================================== */
+const S = {
+  records: [], report: null, meta: null, stats: null,
+  settings: Object.assign({ expected:55, high:80, sub:60 }, jget(K.settings,{})),
+  register: jget(K.register,{}),
+  ui: Object.assign({ tab:'exec', section:'ALL', rank:'V', sortKey:'order', sortDir:1, hmQ:'', hmSort:'name', hmIssues:false,
+                      amItem:'ALL', amDec:'ALL', amTheme:'ALL', amQ:'', regPlenary:false, country:'' }, jget(K.ui,{}))
+};
+const saveUI = () => LS.set(K.ui, JSON.stringify({ tab:S.ui.tab, section:S.ui.section, country:S.ui.country }));
+const saveSettings = () => LS.set(K.settings, JSON.stringify(S.settings));
+const saveRegister = () => LS.set(K.register, JSON.stringify(S.register));
+
+/* =====================================================================
+   3. CSV parsing + REDCap mapping
+   ===================================================================== */
+function parseCSV(text){
+  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+  const first = text.split(/\r\n|\n|\r/,1)[0] || '';
+  const delim = (first.split(';').length > first.split(',').length) ? ';' : ',';
+  const rows = []; let row = [], f = '', q = false;
+  for (let i = 0; i < text.length; i++){
+    const c = text[i];
+    if (q){
+      if (c === '"'){ if (text[i+1] === '"'){ f += '"'; i++; } else q = false; }
+      else f += c;
+    } else if (c === '"') q = true;
+    else if (c === delim){ row.push(f); f = ''; }
+    else if (c === '\n' || c === '\r'){
+      if (c === '\r' && text[i+1] === '\n') i++;
+      row.push(f); rows.push(row); row = []; f = '';
+    } else f += c;
+  }
+  if (f !== '' || row.length){ row.push(f); rows.push(row); }
+  return rows.filter(r => r.some(x => String(x).trim() !== ''));
+}
+
+function normStatus(v){
+  const s = norm(v);
+  if (!s) return null;
+  if (s === '1' || s === 'validated' || s === 'valide') return 'V';
+  if (s === '2' || s.startsWith('validated with') || s.startsWith('valide avec')) return 'A';
+  if (s === '3' || s === 'not validated' || s === 'non valide') return 'N';
+  return 'X';
+}
+function resolveState(raw){
+  raw = String(raw ?? '').trim();
+  if (!raw) return { name:null };
+  if (/^\d+$/.test(raw)){ const k = +raw; return (k >= 1 && k <= 55) ? { name:STATES[k-1] } : { name:raw, unknown:true }; }
+  const m = STATE_BY_NORM.get(norm(raw));
+  return m ? { name:m } : { name:raw, unknown:true };
+}
+const parseTs = s => { const t = Date.parse(String(s||'').replace(' ','T')); return isNaN(t) ? -1 : t; };
+
+function buildRecords(rows){
+  if (rows.length < 2) throw new Error('The file has no data rows. Export "All data" from REDCap (raw values or labels) as CSV and try again.');
+  const header = rows[0].map(h => String(h).trim());
+  const idx = {}; header.forEach((h,i) => { idx[h.toLowerCase()] = i; });
+  const col = n => idx[n.toLowerCase()];
+  const statusCols = ITEMS.filter(it => col(it.col+'_status') !== undefined);
+  if (!statusCols.length){
+    throw new Error('No validation columns found (expected p1_status … c5_status). Please export the REDCap project "achdgf_member_state_validation" as CSV.');
+  }
+  const completeCol = header.findIndex(h => /_complete$/i.test(h));
+  const tsCol = header.findIndex(h => /_timestamp$/i.test(h));
+  const rep = { rowsRead:0, noState:0, unknownStates:[], badValues:0, dupes:[], itemsMapped:statusCols.length,
+                itemsMissingCols: ITEMS.filter(it => col(it.col+'_status') === undefined).map(i=>i.code),
+                cols:{ id:col('record_id'), state:col('member_state'), delegation:col('delegation'), date:col('workshop_date'),
+                       obs:col('overall_observations'), rat:col('country_rationale'), complete:completeCol, ts:tsCol },
+                headerSet:new Set(header.map(h=>h.toLowerCase())) };
+  const get = (r,i) => (i === undefined || i < 0) ? '' : String(r[i] ?? '').trim();
+  const all = [];
+  rows.slice(1).forEach((r, ri) => {
+    rep.rowsRead++;
+    const st = resolveState(get(r, col('member_state')));
+    if (!st.name){ rep.noState++; return; }
+    if (st.unknown && !rep.unknownStates.includes(st.name)) rep.unknownStates.push(st.name);
+    const dec = {}, am = {};
+    ITEMS.forEach(it => {
+      const v = normStatus(get(r, col(it.col+'_status')));
+      if (v === 'X'){ rep.badValues++; dec[it.code] = null; } else dec[it.code] = v;
+      const a = get(r, col(it.col+'_amend'));
+      if (a) am[it.code] = a;
+    });
+    const cmp = get(r, completeCol);
+    all.push({
+      id: get(r, col('record_id')) || String(ri+1), row: ri, state: st.name,
+      delegation: get(r, col('delegation')), date: get(r, col('workshop_date')),
+      ts: parseTs(get(r, tsCol)), tsRaw: get(r, tsCol),
+      form: cmp === '2' ? 'Complete' : cmp === '1' ? 'Unverified' : cmp === '0' ? 'Incomplete' : (cmp || '—'),
+      dec, am, obs: get(r, col('overall_observations')), rat: get(r, col('country_rationale'))
+    });
+  });
+  // one consolidated position per Member State: keep the most recent submission
+  const by = new Map();
+  all.forEach(rec => {
+    const cur = by.get(rec.state);
+    if (!cur){ by.set(rec.state, rec); return; }
+    const newer = (rec.ts > cur.ts) || (rec.ts === cur.ts && rec.row > cur.row);
+    const keep = newer ? rec : cur, drop = newer ? cur : rec;
+    by.set(rec.state, keep);
+    let e = rep.dupes.find(d => d.state === rec.state);
+    if (!e){ e = { state:rec.state, kept:null, removed:[] }; rep.dupes.push(e); }
+    e.kept = keep.id; if (!e.removed.includes(drop.id)) e.removed.push(drop.id);
+    e.removed = e.removed.filter(x => x !== keep.id);
+  });
+  rep.submissions = all.length;
+  return { records:[...by.values()].sort((a,b)=>a.state.localeCompare(b.state)), report:rep };
+}
+
+/* =====================================================================
+   4. Analytics
+   ===================================================================== */
+function classify(pV){
+  if (pV == null) return 'na';
+  if (pV >= S.settings.high) return 'high';
+  if (pV >= S.settings.sub) return 'mid';
+  return 'low';
+}
+const pc = (n,d) => d ? (100*n/d) : null;
+
+function themesOf(text){
+  const t = ' ' + norm(text) + ' ';
+  const out = THEMES.filter(th => th.kw.some(k => t.includes(norm(k).length ? (k.endsWith(' ') ? ' '+norm(k)+' ' : norm(k)) : k)));
+  return out.map(t=>t.id);
+}
+
+const viewRecs = () => S.ui.country ? S.records.filter(r => r.state === S.ui.country) : S.records;
+function compute(){
+  const R = viewRecs(), N = R.length;
+  const items = ITEMS.map(it => {
+    const c = { V:0, A:0, N:0 }, who = { V:[], A:[], N:[], M:[] };
+    R.forEach(r => { const d = r.dec[it.code]; if (d){ c[d]++; who[d].push(r.state); } else who.M.push(r.state); });
+    const n = c.V + c.A + c.N;
+    const o = { ...it, ...c, n, missing:N - n, who,
+      pV:pc(c.V,n), pA:pc(c.A,n), pN:pc(c.N,n), pC:pc(c.V+c.A,n) };
+    o.cls = classify(o.pV);
+    o.comments = R.filter(r => (r.dec[it.code] === 'A' || r.dec[it.code] === 'N'))
+                  .map(r => ({ state:r.state, dec:r.dec[it.code], text:r.am[it.code] || '', rat:r.rat, item:it.code }));
+    return o;
+  });
+  const agg = list => {
+    const t = { V:0, A:0, N:0, missing:0 };
+    list.forEach(i => { t.V+=i.V; t.A+=i.A; t.N+=i.N; t.missing+=i.missing; });
+    t.n = t.V+t.A+t.N; t.pV=pc(t.V,t.n); t.pA=pc(t.A,t.n); t.pN=pc(t.N,t.n); t.pC=pc(t.V+t.A,t.n);
+    return t;
+  };
+  const sections = {}; Object.keys(SECTIONS).forEach(k => { sections[k] = agg(items.filter(i => i.sec === k)); });
+  const overall = agg(items);
+  const answered = R.map(r => ITEMS.filter(i => r.dec[i.code]).length);
+  const complete = R.filter((r,i) => answered[i] === ITEMS.length);
+  const full = complete.filter(r => ITEMS.every(i => r.dec[i.code] === 'V'));
+  const incompl = R.map((r,i) => ({ rec:r, answered:answered[i], missing:ITEMS.filter(x => !r.dec[x.code]).map(x=>x.code) }))
+                   .filter(x => x.answered < ITEMS.length);
+  const decisions = answered.reduce((a,b)=>a+b,0);
+  const possible = N * ITEMS.length;
+  const requiring = items.filter(i => i.cls === 'mid' || i.cls === 'low');
+  const plenary = items.filter(i => i.cls === 'low');
+  // amendment comments + themes
+  const comments = items.flatMap(i => i.comments);
+  comments.forEach(c => { c.themes = c.text ? themesOf(c.text) : []; });
+  const themeCount = Object.fromEntries(THEMES.map(t => [t.id, { n:0, items:{}, states:new Set() }]));
+  comments.forEach(c => c.themes.forEach(id => {
+    themeCount[id].n++; themeCount[id].items[c.item] = (themeCount[id].items[c.item]||0)+1; themeCount[id].states.add(c.state);
+  }));
+  S.stats = { N, items, sections, overall, complete, full, incompl, decisions, possible, requiring, plenary,
+              comments, themeCount, answered,
+              participation: S.settings.expected ? 100*N/S.settings.expected : null,
+              completeness: pc(decisions, possible),
+              fullPct: pc(full.length, complete.length) };
+}
+
+/* =====================================================================
+   5. Helpers
+   ===================================================================== */
+const $ = (s,el=document) => el.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fp = (x,d=1) => x == null ? '—' : x.toFixed(d) + '%';
+const fp0 = x => x == null ? '—' : Math.round(x) + '%';
+const secFilter = () => S.ui.section;
+const visItems = () => S.stats.items.filter(i => secFilter() === 'ALL' || i.sec === secFilter());
+const secLabel = () => secFilter() === 'ALL' ? 'All 17 provisions' : `${SECTIONS[secFilter()].name} (${SECTIONS[secFilter()].range})`;
+const dateFmt = t => t > 0 ? new Date(t).toLocaleString(undefined,{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+const tip = s => `data-tip="${esc(s)}"`;
+const decBadge = d => d ? `<span class="badge b-d${DEC[d].cls}">${DEC[d].short}</span>` : `<span class="badge b-na">No response</span>`;
+
+function csvOut(rows){
+  return rows.map(r => r.map(v => { v = String(v ?? ''); return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v; }).join(',')).join('\r\n');
+}
+function download(name, text, type='text/csv;charset=utf-8'){
+  const b = new Blob(['﻿' + text], { type });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name;
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 600);
+}
+function toast(msg, kind=''){
+  const t = document.createElement('div'); t.className = 'toast ' + kind; t.textContent = msg;
+  $('#toasts').appendChild(t); setTimeout(() => t.remove(), kind === 'error' ? 9000 : 4500);
+}
+function confirmDlg(title, body, okLabel, onOk){
+  const d = $('#dlg');
+  d.innerHTML = `<h3>${esc(title)}</h3><p>${esc(body)}</p><div class="row"><button class="btn sec" data-act="dlgNo">Cancel</button><button class="btn danger" data-act="dlgYes">${esc(okLabel)}</button></div>`;
+  d._ok = onOk; d.showModal();
+}
+
+/* ----- small chart/markup builders ----- */
+function stack(V,A,N, thin=false){
+  const t = V+A+N;
+  if (!t) return `<div class="stack ${thin?'thin':''}"></div>`;
+  const seg = (k,v) => v ? `<span class="s-${k.toLowerCase()}" style="width:${100*v/t}%" ${tip(`${DEC[k].label}: ${v} (${(100*v/t).toFixed(1)}%)`)}>${!thin && 100*v/t >= 9 ? Math.round(100*v/t)+'%' : ''}</span>` : '';
+  return `<div class="stack ${thin?'thin':''}">${seg('V',V)}${seg('A',A)}${seg('N',N)}</div>`;
+}
+const legend = () => `<div class="legend"><span><i class="lg-v"></i>Validated</span><span><i class="lg-a"></i>Validated with amendment</span><span><i class="lg-n"></i>Not validated</span></div>`;
+
+function donut(o){
+  const parts = [['V',o.V],['A',o.A],['N',o.N]].filter(p => p[1] > 0);
+  const size = 200, th = 28, r = (size - 34)/2, C = 2*Math.PI*r, cx = size/2;
+  let off = 0, segs = '';
+  parts.forEach(([k,v]) => {
+    const len = C * v / o.n, gap = parts.length > 1 ? 2.5 : 0;
+    segs += `<circle class="seg-c" cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="${DEC[k].color}" stroke-width="${th}"
+      stroke-dasharray="${Math.max(len-gap,0.1)} ${C-len+gap}" stroke-dashoffset="${-off}" transform="rotate(-90 ${cx} ${cx})"
+      ${tip(`${DEC[k].label}: ${v} decisions (${(100*v/o.n).toFixed(1)}%)`)}></circle>`;
+    off += len;
+  });
+  return `<div class="donut"><svg viewBox="0 0 ${size} ${size}" role="img" aria-label="Overall decision distribution">
+    <circle cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="#EFEBE8" stroke-width="${th}"></circle>${segs}</svg>
+    <div class="mid"><b>${o.n ? fp0(o.pV) : '—'}</b><span>unconditionally validated</span></div></div>`;
+}
+
+/* =====================================================================
+   6. Views
+   ===================================================================== */
+const TABS = [
+  ['exec','Executive Dashboard'],['matrix','Provision Matrix'],['states','Member States'],
+  ['amend','Amendments & Themes'],['register','Resolution Register'],['data','Data & Settings']
+];
+
+function filterBar(){
+  const b = (k,l) => `<button data-act="section" data-v="${k}" aria-pressed="${S.ui.section===k}">${l}</button>`;
+  return `<div class="toolbar"><span class="lbl">Provisions</span>
+    <div class="seg" role="group" aria-label="Filter provisions by section">
+      ${b('ALL','All 17')}${b('P','Pillars P1–P5')}${b('D','Domains D1–D7')}${b('C','Continental C1–C5')}
+    </div>
+    <span class="lbl" style="margin-left:12px">Member State</span>
+    <select class="search" data-in="country" aria-label="Filter by Member State" style="min-width:230px;font-weight:600">
+      <option value="">All Member States (${S.records.length})</option>
+      ${S.records.map(r => `<option value="${esc(r.state)}" ${S.ui.country===r.state?'selected':''}>${esc(r.state)}</option>`).join('')}
+    </select>
+    ${S.ui.country ? `<button class="btn ghost sm" data-act="clearCountry">✕ Clear</button>` : ''}
+    </div>
+    ${S.ui.country ? `<div class="banner" style="border:1px solid #E6D9B8;border-radius:10px;margin:-4px 0 16px"><div class="banner-in" style="padding:8px 14px"><span>Viewing <b>${esc(S.ui.country)}</b> only — every figure on this page reflects this Member State's own responses. Percentages are therefore 0 / 100 per provision.</span></div></div>` : ''}`;
+}
+
+/* ---------- Executive ---------- */
+function kpi(label, val, sub, color, meter){
+  return `<div class="card kpi" style="--c:${color}"><div class="k-l">${label}</div><div class="k-v">${val}</div><div class="k-s">${sub}</div>
+    ${meter != null ? `<div class="meter"><i style="width:${Math.min(Math.max(meter,0),100)}%"></i></div>` : ''}</div>`;
+}
+function scorecardRows(list){
+  const h = S.settings.high, s = S.settings.sub;
+  return `<div class="scale-l"><span></span><span></span><div class="tr"><span style="left:0">0%</span><span style="left:${s}%">${s}%</span><span style="left:${h}%">${h}%</span><span style="left:100%">100%</span></div><span></span><span></span></div>` +
+    list.map(i => `<button class="sc-row" data-act="item" data-code="${i.code}" ${tip(`${i.code} — ${i.title}\nUnconditional: ${fp(i.pV)} (${i.V} of ${i.n})`)}>
+      <span class="sc-code">${i.code}</span><span class="sc-title">${esc(i.title)}</span>
+      <span class="sc-track"><span class="sc-fill ${CLS[i.cls].fill}" style="display:block;width:${i.pV ?? 0}%"></span><span class="mark" style="left:${s}%"></span><span class="mark" style="left:${h}%"></span></span>
+      <span class="sc-val">${fp(i.pV)}</span><span class="badge ${CLS[i.cls].b}">${CLS[i.cls].badge}</span></button>`).join('');
+}
+function rankList(list, key, color, fmt){
+  const sorted = [...list].sort((a,b) => (b['p'+key]??-1) - (a['p'+key]??-1) || b[key] - a[key] || a.order - b.order);
+  return sorted.map((i,k) => `<button class="rank-row" data-act="item" data-code="${i.code}" ${tip(`${i.code} — ${i.title}`)}>
+    <span class="pos">${k+1}</span><span class="sc-code">${i.code}</span>
+    <span><span class="rank-t">${esc(i.title)}</span><span class="rb" style="display:block"><i style="width:${i['p'+key] ?? 0}%;background:${color}"></i></span></span>
+    <span class="rv">${fp(i['p'+key])}<small>${i[key]} of ${i.n}</small></span></button>`).join('');
+}
+function priorityMap(list){
+  const W = 560, H = 330, m = { l:46, r:14, t:14, b:42 };
+  const maxY = Math.max(10, Math.ceil(Math.max(...list.map(i => i.pN ?? 0), 0)/5)*5 + 5);
+  const X = v => m.l + (W-m.l-m.r) * v/100, Y = v => H - m.b - (H-m.t-m.b) * v/maxY;
+  const h = S.settings.high, s = S.settings.sub;
+  let g = `<rect x="${X(0)}" y="${Y(maxY)}" width="${X(s)-X(0)}" height="${Y(0)-Y(maxY)}" fill="var(--n-t)" opacity=".7"></rect>
+           <rect x="${X(s)}" y="${Y(maxY)}" width="${X(h)-X(s)}" height="${Y(0)-Y(maxY)}" fill="var(--a-t)" opacity=".8"></rect>
+           <rect x="${X(h)}" y="${Y(maxY)}" width="${X(100)-X(h)}" height="${Y(0)-Y(maxY)}" fill="var(--v-t)" opacity=".9"></rect>`;
+  for (let v = 0; v <= 100; v += 20) g += `<text x="${X(v)}" y="${H-m.b+18}" text-anchor="middle" font-size="11" fill="#665C61">${v}%</text>`;
+  for (let v = 0; v <= maxY; v += 5) g += `<line x1="${m.l}" x2="${W-m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="#fff" stroke-opacity=".9"></line><text x="${m.l-8}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="#665C61">${v}%</text>`;
+  g += `<text x="${(m.l+W-m.r)/2}" y="${H-6}" text-anchor="middle" font-size="12" font-weight="700" fill="#201A1C">Unconditional validation rate →</text>
+        <text transform="translate(13 ${(m.t+H-m.b)/2}) rotate(-90)" text-anchor="middle" font-size="12" font-weight="700" fill="#201A1C">Non-validation rate →</text>
+        <text x="${X(s/2)}" y="${m.t+12}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8C0024">FURTHER CONSULTATION</text>
+        <text x="${X((s+h)/2)}" y="${m.t+12}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8F7338">REVIEW</text>
+        <text x="${X((h+100)/2)}" y="${m.t+12}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#005A38">HIGH</text>`;
+  list.forEach(i => {
+    if (i.pV == null) return;
+    const fill = i.cls === 'high' ? 'var(--v)' : i.cls === 'mid' ? 'var(--a)' : 'var(--n)';
+    const r = 9 + Math.min(i.A, 20)*0.35;
+    g += `<g class="pt" data-act="item" data-code="${i.code}" tabindex="0" ${tip(`${i.code} — ${i.title}\nUnconditional ${fp(i.pV)} · Not validated ${fp(i.pN)} · Amendments ${i.A}`)}>
+      <circle cx="${X(i.pV)}" cy="${Y(i.pN)}" r="${r}" fill="${fill}" fill-opacity=".92" stroke="#fff" stroke-width="1.5"></circle>
+      <text x="${X(i.pV)}" y="${Y(i.pN)+3.5}" text-anchor="middle" font-size="9.5" font-weight="800" fill="${i.cls==='mid'?'#201A1C':'#fff'}" pointer-events="none">${i.code}</text></g>`;
+  });
+  return `<svg class="scatter" viewBox="0 0 ${W} ${H}" role="img" aria-label="Resolution priority map">${g}</svg>`;
+}
+
+function viewExec(){
+  const st = S.stats, o = st.overall, list = visItems();
+  const kpis = `<div class="grid g5">
+    ${S.ui.country ? kpi('Selected Member State', '1', `${esc(S.ui.country)} · ${esc(S.records.find(r=>r.state===S.ui.country)?.form||'')}`, 'var(--maroon)') : kpi('Responding Member States<span class="q">Q1</span>', st.N, `of ${S.settings.expected} expected · <b>${fp(st.participation)}</b> participation`, 'var(--maroon)', st.participation)}
+    ${kpi('Response completeness<span class="q">Q15</span>', fp(st.completeness), `${st.decisions} of ${st.possible} item decisions recorded · ${st.incompl.length} submission${st.incompl.length===1?'':'s'} with unanswered items`, 'var(--gold-d)', st.completeness)}
+    ${kpi('Full-document endorsement<span class="q">Q14</span>', st.full.length, `of ${st.complete.length} complete responses (<b>${fp(st.fullPct)}</b>) validated all 17 items without amendment`, 'var(--green)', st.fullPct)}
+    ${kpi('Provisions requiring resolution', `${st.requiring.length}<small> / 17</small>`, `${st.plenary.length} further consultation / plenary · ${st.requiring.length - st.plenary.length} technical review`, 'var(--maroon)', 100*st.requiring.length/17)}
+    ${kpi('Combined support rate', fp(o.pC), `Validated + with amendment · unconditional ${fp(o.pV)} reported separately`, 'var(--green)', o.pC)}
+  </div>`;
+
+  const dist = `<div class="card"><div class="card-h"><div><h2>Overall decision distribution<span class="q">Q5</span></h2>
+      <p class="desc">Share of all recorded item decisions (${o.n}), missing responses excluded.</p></div></div>
+      <div class="donut-wrap">${donut(o)}<ul class="dl">
+        ${['V','A','N'].map(k => `<li><i style="background:${DEC[k].color}"></i><span class="nm">${DEC[k].label}<span class="ct">${o[k]} decisions</span></span><span class="vl">${fp(o['p'+k])}</span></li>`).join('')}
+      </ul></div>
+      <div class="note"><b>Read with care:</b> this is the share of <i>item decisions</i>, not the share of Member States that fully endorse the document — see “Full-document endorsement”.</div></div>`;
+
+  const secs = `<div class="card"><h2>Validation distribution by section<span class="q">Q6</span></h2>
+      <p class="desc">Decisions per section, missing responses excluded.</p>
+      ${Object.keys(SECTIONS).map(k => { const s = st.sections[k]; return `<div class="sec-row"><div class="sr-h"><span>${SECTIONS[k].name} <small style="color:var(--muted);font-weight:600">(${SECTIONS[k].range})</small></span><span>${s.n} decisions · ${s.missing} missing</span></div>${stack(s.V,s.A,s.N)}</div>`; }).join('')}
+      <div class="sec-row"><div class="sr-h"><span>Whole framework <small style="color:var(--muted);font-weight:600">(17 items)</small></span><span>${o.n} decisions</span></div>${stack(o.V,o.A,o.N)}</div>
+      ${legend()}</div>`;
+
+  const mgmt = `<div class="card"><h2>Strategic management indicators</h2><p class="desc">Overall and by section — share of recorded decisions.</p>
+    <div class="tbl-wrap"><table class="t"><thead><tr><th>Indicator</th><th>Overall</th><th>Pillars</th><th>Domains</th><th>Continental</th><th>Management interpretation</th></tr></thead><tbody>
+    ${[['Unconditional consensus rate','pV','Share validating without amendment','pc-v'],
+       ['Conditional support rate','pA','Share validating with amendment','pc-a'],
+       ['Combined support rate','pC','Share selecting either validation category',''],
+       ['Non-validation rate','pN','Share rejecting the item in its current form','pc-n']]
+      .map(([n,k,t,c]) => `<tr><td><b>${n}</b></td><td class="num ${c}">${fp(o[k])}</td>${Object.keys(SECTIONS).map(s => `<td class="num ${c}">${fp(st.sections[s][k])}</td>`).join('')}<td>${t}</td></tr>`).join('')}
+    <tr><td><b>Resolution priority</b></td><td class="num"><b>${st.requiring.length}</b> / 17</td>
+      ${Object.keys(SECTIONS).map(s => { const L = st.items.filter(i=>i.sec===s); const n = L.filter(i=>i.cls==='mid'||i.cls==='low').length; return `<td class="num"><b>${n}</b> / ${L.length}</td>`; }).join('')}
+      <td>Items requiring technical or plenary attention (unconditional rate below ${S.settings.high}%)</td></tr>
+    </tbody></table></div></div>`;
+
+  const sc = `<div class="card"><div class="card-h"><div><h2>Consensus scorecard<span class="q">Q10</span></h2>
+      <p class="desc">Unconditional validation rate against the suggested thresholds — ${esc(secLabel())}.</p></div></div>
+      ${scorecardRows(list)}
+      <div class="note">Thresholds (subject to approval): <b>${S.settings.high}–100%</b> high consensus · <b>${S.settings.sub}–${S.settings.high-1}%</b> substantial support, review amendments · <b>below ${S.settings.sub}%</b> further consultation or plenary discussion. Adjustable in Data &amp; Settings.</div></div>`;
+
+  const map = `<div class="card"><h2>Resolution priority map</h2>
+      <p class="desc">Each bubble is a provision; bigger = more amendment requests. Click a bubble for details.</p>${priorityMap(list)}</div>`;
+
+  const lists = `<div class="grid g3">
+    <div class="card"><h2>Highest unconditional validation<span class="q">Q7</span></h2><p class="desc">Top 5 · ${esc(secLabel())}</p>${rankList([...list].sort((a,b)=>(b.pV??-1)-(a.pV??-1)).slice(0,5),'V','var(--green)')}</div>
+    <div class="card"><h2>Most amendment requests<span class="q">Q8</span></h2><p class="desc">Top 5 · ${esc(secLabel())}</p>${rankList([...list].sort((a,b)=>(b.pA??-1)-(a.pA??-1)).slice(0,5),'A','var(--gold)')}</div>
+    <div class="card"><h2>Highest non-validation<span class="q">Q9</span></h2><p class="desc">Priority review list · top 5 · ${esc(secLabel())}</p>${rankList([...list].sort((a,b)=>(b.pN??-1)-(a.pN??-1)).slice(0,5),'N','var(--maroon)')}</div>
+  </div>`;
+
+  return filterBar() + kpis + `<div class="grid g-12">${dist}${secs}</div>` + matrixCard() + `<div class="grid g-21">${sc}${map}</div>` + `<div class="grid" style="grid-template-columns:minmax(0,1fr)">${mgmt}</div>` + lists;
+}
+
+/* ---------- Provision matrix ---------- */
+function matrixCard(){
+  const st = S.stats, list = visItems();
+  const key = S.ui.sortKey, dir = S.ui.sortDir;
+  const val = i => key === 'order' ? i.order : key === 'title' ? i.title : key === 'missing' ? i.missing : (i['p'+key] ?? -1);
+  const sorted = [...list].sort((a,b) => { const x = val(a), y = val(b); return (typeof x === 'string' ? x.localeCompare(y) : x - y) * dir || a.order - b.order; });
+  const th = (k,l) => `<th class="sortable" data-act="sort" data-k="${k}" aria-sort="${key===k?(dir>0?'ascending':'descending'):'none'}">${l}${key===k?` <span class="ar">${dir>0?'▲':'▼'}</span>`:''}</th>`;
+  const cell = (n,p,c) => `<td class="num"><span class="${c}">${n}</span><small>(${fp(p)})</small></td>`;
+  const row = i => `<tr class="row-i" data-act="item" data-code="${i.code}" tabindex="0">
+    <td><span class="codepill">${i.code}</span></td><td><b>${esc(i.title)}</b></td>
+    ${cell(i.V,i.pV,'pc-v')}${cell(i.A,i.pA,'pc-a')}${cell(i.N,i.pN,'pc-n')}
+    <td class="num">${i.missing}</td><td style="min-width:130px">${stack(i.V,i.A,i.N,true)}</td>
+    <td class="num"><b>${fp(i.pC)}</b></td><td><span class="badge ${CLS[i.cls].b}">${CLS[i.cls].badge}</span></td></tr>`;
+  const tot = (label, t, cls='sub') => `<tr class="${cls}"><td colspan="2">${label}</td>
+    <td class="num">${t.V}<small>(${fp(t.pV)})</small></td><td class="num">${t.A}<small>(${fp(t.pA)})</small></td><td class="num">${t.N}<small>(${fp(t.pN)})</small></td>
+    <td class="num">${t.missing}</td><td>${stack(t.V,t.A,t.N,true)}</td><td class="num">${fp(t.pC)}</td><td></td></tr>`;
+  let body = '';
+  if (key === 'order'){
+    Object.keys(SECTIONS).forEach(k => {
+      if (secFilter() !== 'ALL' && secFilter() !== k) return;
+      const rows = sorted.filter(i => i.sec === k); if (!rows.length) return;
+      body += `<tr class="sub"><td colspan="9">${SECTIONS[k].name.toUpperCase()} (${SECTIONS[k].range})</td></tr>` + rows.map(row).join('') + tot('Section total', st.sections[k]);
+    });
+  } else body = sorted.map(row).join('');
+  if (secFilter() === 'ALL') body += tot('ALL 17 PROVISIONS', st.overall, 'tot');
+  return `<div class="card" style="margin-bottom:16px"><h2>Provision-by-provision validation matrix<span class="q">Q2–Q4</span></h2>
+    <p class="desc">Count (and % of recorded decisions) per response category — ${esc(secLabel())}. Percentages exclude missing responses. Click a row for Member State detail; click a header to sort.</p>
+    <div class="tbl-wrap"><table class="t"><thead><tr>${th('order','Code')}${th('title','Provision')}${th('V','Validated n (%)')}${th('A','With amendment n (%)')}${th('N','Not validated n (%)')}${th('missing','Missing n')}<th>Distribution</th>${th('C','Combined support')}<th>Consensus</th></tr></thead>
+    <tbody>${body}</tbody></table></div>${legend()}</div>`;
+}
+function viewMatrix(){
+  const list = visItems();
+  const rk = S.ui.rank, rkInfo = { V:['Highest unconditional validation','Q7','var(--green)','V'], A:['Most amendment requests','Q8','var(--gold)','A'], N:['Highest non-validation — priority review list','Q9','var(--maroon)','N'] }[rk];
+  const rl = [...list].filter(i => rk !== 'N' || i.N > 0);
+  const rseg = (k,l) => `<button data-act="rank" data-v="${k}" aria-pressed="${rk===k}">${l}</button>`;
+
+  return filterBar() + matrixCard() + `
+    <div class="card"><div class="card-h"><div><h2>${rkInfo[0]}<span class="q">${rkInfo[1]}</span></h2><p class="desc">Ranked — ${esc(secLabel())}${rk==='N'?' · only provisions with at least one non-validation':''}.</p></div>
+      <div class="seg" role="group" aria-label="Ranking metric">${rseg('V','Unconditional')}${rseg('A','Amendments')}${rseg('N','Non-validation')}</div></div>
+    ${rl.length ? rankList(rl, rkInfo[3], rkInfo[2]) : '<div class="empty">No provision has a non-validation in the current data.</div>'}</div>`;
+}
+
+/* ---------- Member States ---------- */
+function hmRows(){
+  const st = S.stats, list = visItems(), q = norm(S.ui.hmQ);
+  let rs = viewRecs().map((r,i) => {
+    const c = { V:0, A:0, N:0, M:0 };
+    ITEMS.forEach(it => { const d = r.dec[it.code]; c[d || 'M']++; });
+    return { r, c };
+  });
+  if (q) rs = rs.filter(x => norm(x.r.state).includes(q));
+  if (S.ui.hmIssues) rs = rs.filter(x => x.c.A + x.c.N + x.c.M > 0);
+  const sorts = {
+    name:(a,b)=>a.r.state.localeCompare(b.r.state),
+    issues:(a,b)=>(b.c.N-a.c.N)||(b.c.A-a.c.A)||a.r.state.localeCompare(b.r.state),
+    support:(a,b)=>(b.c.V-a.c.V)||a.r.state.localeCompare(b.r.state)
+  };
+  rs.sort(sorts[S.ui.hmSort] || sorts.name);
+  return rs.map(({r,c}) => `<tr><td class="stn"><button data-act="state" data-s="${esc(r.state)}">${esc(r.state)}</button></td>
+    ${list.map(i => { const d = r.dec[i.code]; return `<td><button class="cell c-${d||'M'}" data-act="cell" data-code="${i.code}" ${tip(`${r.state}\n${i.code} — ${i.title}\n${d ? DEC[d].label : 'No response'}`)} aria-label="${esc(r.state)} ${i.code} ${d ? DEC[d].label : 'no response'}">${d ? DEC[d].glyph : '·'}</button></td>`; }).join('')}
+    <td class="sum">${c.V}✓ ${c.A}± ${c.N}✕${c.M?` ${c.M}·`:''}</td></tr>`).join('') ||
+    `<tr><td colspan="${list.length+2}" class="empty">No Member State matches the current filter.</td></tr>`;
+}
+function viewStates(){
+  const st = S.stats, list = visItems();
+  const hseg = (k,l) => `<button data-act="hmSort" data-v="${k}" aria-pressed="${S.ui.hmSort===k}">${l}</button>`;
+  const strip = `<div class="grid g3">
+    ${kpi('Member States responding', st.N, `${S.report?.submissions ?? st.N} submissions received${S.report?.dupes.length ? ` · ${S.report.dupes.length} duplicate${S.report.dupes.length>1?'s':''} resolved` : ''}`, 'var(--maroon)')}
+    ${kpi('Validated all 17 without amendment', st.full.length, `${fp(st.fullPct)} of ${st.complete.length} complete responses`, 'var(--green)', st.fullPct)}
+    ${kpi('Submissions with unanswered items', st.incompl.length, `${fp(100 - (st.completeness ?? 100))} of expected item decisions missing`, 'var(--gold-d)')}
+  </div>`;
+  const fullCard = `<div class="card" style="margin-bottom:16px"><h2>Full endorsement without amendment<span class="q">Q14</span></h2>
+    <p class="desc">Member States that selected “Validated” for all 17 items (complete responses only).</p>
+    ${st.full.length ? `<div class="chips">${st.full.map(r => `<button class="pill v" data-act="state" data-s="${esc(r.state)}">✓ ${esc(r.state)}</button>`).join('')}</div>` : '<div class="empty">No Member State has validated all 17 items without amendment yet.</div>'}</div>`;
+  const hm = `<div class="card" style="margin-bottom:16px"><div class="card-h"><div><h2>Country-by-provision matrix<span class="q">Q11</span></h2>
+    <p class="desc">Who requested amendments (±) or did not validate (✕) each provision — ${esc(secLabel())}. Click a cell for the provision detail, a name for the Member State profile.</p></div></div>
+    <div class="toolbar"><input class="search" id="hmQ" placeholder="Search Member State…" value="${esc(S.ui.hmQ)}" aria-label="Search Member State" data-in="hmQ">
+      <div class="seg" role="group" aria-label="Sort">${hseg('name','A–Z')}${hseg('issues','Most concerns')}${hseg('support','Most validated')}</div>
+      <label class="pill" style="cursor:pointer"><input type="checkbox" data-in="hmIssues" ${S.ui.hmIssues?'checked':''}> Only with amendments / gaps</label></div>
+    <div class="hm-wrap"><table class="hm"><thead><tr><th class="stn">Member State</th>${list.map(i => `<th ${tip(i.title)}>${i.code}</th>`).join('')}<th></th></tr></thead><tbody id="hmBody">${hmRows()}</tbody></table></div>
+    <div class="legend"><span><i class="lg-v"></i>✓ Validated</span><span><i class="lg-a"></i>± With amendment</span><span><i class="lg-n"></i>✕ Not validated</span><span><i class="lg-m"></i>· No response</span></div></div>`;
+  const comp = `<div class="card"><h2>Completeness report<span class="q">Q15</span></h2>
+    <p class="desc">Submissions that contain unanswered items. Missing responses are reported here and excluded from all percentage denominators.</p>
+    ${st.incompl.length ? `<div class="tbl-wrap"><table class="t"><thead><tr><th>Member State</th><th>Answered</th><th>Unanswered items</th><th>REDCap form status</th><th>Submitted</th></tr></thead><tbody>
+      ${st.incompl.map(x => `<tr class="row-i" data-act="state" data-s="${esc(x.rec.state)}" tabindex="0"><td><b>${esc(x.rec.state)}</b></td><td class="num">${x.answered} / 17</td>
+        <td><div class="chips">${x.missing.map(c => `<span class="pill m">${c}</span>`).join('')}</div></td><td>${esc(x.rec.form)}</td><td class="num">${esc(x.rec.tsRaw || '—')}</td></tr>`).join('')}
+      </tbody></table></div>` : '<div class="empty">All submissions answered all 17 items.</div>'}</div>`;
+  return strip + fullCard + hm + comp;
+}
+
+/* ---------- Amendments & themes ---------- */
+function filteredComments(){
+  const st = S.stats, vis = new Set(visItems().map(i=>i.code));
+  const q = norm(S.ui.amQ);
+  return st.comments.filter(c => vis.has(c.item)
+    && (S.ui.amItem === 'ALL' || c.item === S.ui.amItem)
+    && (S.ui.amDec === 'ALL' || c.dec === S.ui.amDec)
+    && (S.ui.amTheme === 'ALL' || c.themes.includes(S.ui.amTheme))
+    && (!q || norm(c.text + ' ' + c.state).includes(q)))
+    .sort((a,b) => ITEM[a.item].order - ITEM[b.item].order || a.state.localeCompare(b.state));
+}
+function commentCards(list){
+  return list.length ? list.map(c => `<div class="cm ${c.dec==='N'?'n':''}"><div class="cm-h">
+      <button class="pill" data-act="item" data-code="${c.item}"><b>${c.item}</b> ${esc(ITEM[c.item].title)}</button>
+      <button class="pill" data-act="state" data-s="${esc(c.state)}">${esc(c.state)}</button>${decBadge(c.dec)}</div>
+      <p>${c.text ? esc(c.text) : '<i style="color:var(--muted)">No amendment text provided.</i>'}</p>
+      ${c.themes.length ? `<div class="tags">${c.themes.map(t => `<span class="tg">${THEMES.find(x=>x.id===t).label}</span>`).join('')}</div>` : ''}</div>`).join('')
+    : '<div class="empty">No amendment comments match the current filters.</div>';
+}
+function viewAmend(){
+  const st = S.stats, vis = new Set(visItems().map(i=>i.code));
+  const cs = st.comments.filter(c => vis.has(c.item));
+  const tc = THEMES.map(t => ({ t, n:cs.filter(c => c.themes.includes(t.id)).length })).sort((a,b)=>b.n-a.n);
+  const max = Math.max(1, ...tc.map(x=>x.n));
+  const unclassified = cs.filter(c => c.text && !c.themes.length).length, noText = cs.filter(c => !c.text).length;
+  const list = filteredComments();
+  const opt = (v,l,cur) => `<option value="${v}" ${cur===v?'selected':''}>${l}</option>`;
+  return filterBar() + `<div class="grid g-12">
+    <div class="card"><h2>Recurring amendment themes<span class="q">Q12</span></h2>
+      <p class="desc">${cs.length} amendment / non-validation comments · ${esc(secLabel())}. Click a theme to filter the comments.</p>
+      ${tc.map(({t,n}) => `<button class="theme-row" data-act="theme" data-v="${t.id}" aria-pressed="${S.ui.amTheme===t.id}"><span style="font-weight:600">${t.label}</span><span class="tb"><i style="width:${100*n/max}%"></i></span><b>${n}</b></button>`).join('')}
+      <div class="note">Themes are tagged automatically from keywords (English &amp; French) and a comment can belong to several themes. ${unclassified} comment${unclassified===1?'':'s'} matched no theme${noText ? `; ${noText} decision${noText===1?'':'s'} had no text` : ''}. Treat as a screening aid and review the wording below.</div></div>
+    <div class="card"><h2>Comments by provision</h2><p class="desc">Where amendment comments concentrate.</p>
+      ${visItems().map(i => ({ i, n:i.comments.length })).sort((a,b)=>b.n-a.n || a.i.order-b.i.order).map(({i,n}) => `<button class="rank-row" style="grid-template-columns:34px minmax(0,1fr) 40px" data-act="item" data-code="${i.code}"><span class="sc-code">${i.code}</span><span><span class="rank-t">${esc(i.title)}</span><span class="rb" style="display:block"><i style="width:${100*n/Math.max(1,...visItems().map(x=>x.comments.length))}%;background:var(--gold)"></i></span></span><span class="rv">${n}</span></button>`).join('')}
+    </div></div>
+    <div class="card"><h2>Amendment comments</h2><p class="desc">Showing <b>${list.length}</b> of ${cs.length}.</p>
+      <div class="toolbar"><input class="search" data-in="amQ" id="amQ" placeholder="Search text or Member State…" value="${esc(S.ui.amQ)}" aria-label="Search comments">
+        <select class="search" data-in="amItem" aria-label="Provision"><option value="ALL">All provisions</option>${visItems().map(i => opt(i.code, `${i.code} — ${esc(i.title)}`, S.ui.amItem)).join('')}</select>
+        <select class="search" data-in="amDec" aria-label="Decision">${opt('ALL','Amended + not validated',S.ui.amDec)}${opt('A','With amendment',S.ui.amDec)}${opt('N','Not validated',S.ui.amDec)}</select>
+        <select class="search" data-in="amTheme" aria-label="Theme">${opt('ALL','All themes',S.ui.amTheme)}${THEMES.map(t => opt(t.id,t.label,S.ui.amTheme)).join('')}</select>
+        <button class="btn sec sm" data-act="amReset">Reset filters</button></div>
+      <div id="amList">${commentCards(list)}</div></div>`;
+}
+
+/* ---------- Resolution register ---------- */
+const REG_STATUS = ['Open','Technical review','Referred to plenary','Resolved','No action required'];
+function regRows(){
+  let list = visItems();
+  if (S.ui.regPlenary) list = list.filter(i => i.cls === 'low' || i.cls === 'mid' || i.N > 0);
+  return list.map(i => {
+    const reg = S.register[i.code] || {};
+    const amenders = i.comments.map(c => c.state);
+    const rats = i.comments.filter(c => c.rat).map(c => `<div><b>${esc(c.state)}:</b> ${esc(c.rat)}</div>`);
+    const texts = i.comments.filter(c => c.text).map(c => `<div><b>${esc(c.state)} <span style="color:${c.dec==='N'?'var(--maroon)':'var(--gold-d)'}">(${DEC[c.dec].short})</span>:</b> ${esc(c.text)}</div>`);
+    return `<tr><td><span class="codepill">${i.code}</span></td>
+      <td style="min-width:200px"><b>${esc(i.title)}</b><div style="margin-top:4px"><span class="badge ${CLS[i.cls].b}">${CLS[i.cls].badge}</span> <small class="num">${fp(i.pV)} unconditional</small></div></td>
+      <td style="min-width:240px">${texts.length ? `<details class="dt"><summary>${texts.length} proposed amendment${texts.length>1?'s':''}</summary><div class="dt-b">${texts.join('')}</div></details>` : '<span style="color:var(--muted)">None recorded</span>'}
+        ${rats.length ? `<details class="dt" style="margin-top:6px"><summary>Rationale / country-specific considerations (${rats.length})</summary><div class="dt-b">${rats.join('')}</div></details>` : ''}</td>
+      <td style="min-width:180px"><div class="chips">${amenders.length ? amenders.map(s => `<button class="pill ${i.comments.find(c=>c.state===s).dec==='N'?'n':'a'}" data-act="state" data-s="${esc(s)}">${esc(s)}</button>`).join('') : '<span style="color:var(--muted)">—</span>'}</div></td>
+      <td style="min-width:150px"><input class="reg-in" data-reg="${i.code}" data-f="owner" placeholder="Owner" value="${esc(reg.owner||'')}" aria-label="Owner for ${i.code}"></td>
+      <td class="reg-st" style="min-width:160px"><select data-reg="${i.code}" data-f="status" aria-label="Resolution status for ${i.code}">${REG_STATUS.map(s => `<option ${((reg.status || (i.cls==='low'?'Referred to plenary':'Open'))===s)?'selected':''}>${s}</option>`).join('')}</select></td>
+      <td style="min-width:200px"><input class="reg-in" data-reg="${i.code}" data-f="final" placeholder="Final decision" value="${esc(reg.final||'')}" aria-label="Final decision for ${i.code}"></td></tr>`;
+  }).join('') || '<tr><td colspan="7" class="empty">No provision matches the filter.</td></tr>';
+}
+function viewRegister(){
+  const st = S.stats;
+  const obs = viewRecs().filter(r => r.obs);
+  return filterBar() + `<div class="card" style="margin-bottom:16px"><div class="card-h"><div><h2>Amendment and plenary resolution register<span class="q">Q13</span></h2>
+    <p class="desc">Proposed wording, rationale, Member States, owner, resolution status and final decision. Owner, status and final decision are editable and saved in this browser.</p></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><label class="pill" style="cursor:pointer"><input type="checkbox" data-in="regPlenary" ${S.ui.regPlenary?'checked':''}> Only items needing resolution</label>
+      <button class="btn green sm" data-act="dlRegister">⬇ Export register (CSV)</button></div></div>
+    <div class="tbl-wrap"><table class="t"><thead><tr><th>Code</th><th>Provision</th><th>Proposed wording / rationale</th><th>Member States</th><th>Owner</th><th>Resolution status</th><th>Final decision</th></tr></thead><tbody id="regBody">${regRows()}</tbody></table></div>
+    <div class="note">Items default to “Referred to plenary” when the unconditional rate is below ${S.settings.sub}%, otherwise “Open”. ${st.plenary.length} provision${st.plenary.length===1?'':'s'} currently fall${st.plenary.length===1?'s':''} in the further-consultation band.</div></div>
+    <div class="card"><h2>Matters raised for plenary consideration</h2><p class="desc">Free-text “Overall observations” submitted by Member States (${obs.length}).</p>
+    ${obs.length ? obs.map(r => `<div class="cm"><div class="cm-h"><button class="pill" data-act="state" data-s="${esc(r.state)}"><b>${esc(r.state)}</b></button>
+      ${[...new Set(r.obs.match(/\b[PDC][1-7]\b/g) || [])].filter(c => ITEM[c]).map(c => `<button class="pill a" data-act="item" data-code="${c}">${c}</button>`).join('')}</div><p>${esc(r.obs)}</p></div>`).join('')
+      : '<div class="empty">No overall observations were submitted.</div>'}</div>`;
+}
+
+/* ---------- Data & settings ---------- */
+function viewData(){
+  const rp = S.report, m = S.meta || {};
+  const found = n => rp && rp.headerSet.has(n);
+  const srcName = { sample:'Built-in sample data', import:'Imported file', repo:'Shared dataset (redcap_export.csv)' }[m.source] || '—';
+  const qa = rp ? `<dl class="kv">
+      <dt>Rows read</dt><dd>${rp.rowsRead}</dd>
+      <dt>Member States after de-duplication</dt><dd>${S.stats.N}</dd>
+      <dt>Duplicate submissions resolved</dt><dd>${rp.dupes.length ? rp.dupes.map(d => `${esc(d.state)} (kept record ${esc(d.kept)}, dropped ${d.removed.map(esc).join(', ')})`).join('; ') : 'none'}</dd>
+      <dt>Rows without a Member State</dt><dd class="${rp.noState?'bad':''}">${rp.noState}</dd>
+      <dt>Unrecognised Member State names</dt><dd class="${rp.unknownStates.length?'bad':''}">${rp.unknownStates.length ? rp.unknownStates.map(esc).join(', ') : 'none'}</dd>
+      <dt>Unrecognised decision values</dt><dd class="${rp.badValues?'bad':''}">${rp.badValues}</dd>
+      <dt>Provision columns found</dt><dd>${rp.itemsMapped} of 17${rp.itemsMissingCols.length ? ` <span class="bad">(missing: ${rp.itemsMissingCols.join(', ')})</span>` : ''}</dd></dl>` : '';
+  const map = `<div class="tbl-wrap" style="max-height:340px"><table class="t"><thead><tr><th>REDCap variable</th><th>Used for</th><th>Found</th></tr></thead><tbody>
+    ${[['record_id','Record identifier & de-duplication'],['member_state','Member State (dropdown code 1–55 or label)'],['delegation','Delegation, shown in the Member State profile'],
+       ['workshop_date','Workshop date, shown in the profile'],['overall_observations','Matters for plenary consideration'],['country_rationale','Rationale / country-specific considerations'],
+       ['achdgf_member_state_validation_complete','REDCap form status (Complete / Unverified / Incomplete)'],['achdgf_member_state_validation_timestamp','Used to keep the latest submission per Member State']]
+      .map(([v,u]) => `<tr><td><code>${v}</code></td><td>${u}</td><td>${found(v) ? '<span class="ok">✓</span>' : '<span style="color:var(--muted)">—</span>'}</td></tr>`).join('')}
+    ${ITEMS.map(i => `<tr><td><code>${i.col}_status</code> · <code>${i.col}_amend</code></td><td><b>${i.code}</b> — ${esc(i.title)}: decision (1 Validated · 2 With amendment · 3 Not validated) and amendment text</td>
+      <td>${found(i.col+'_status') ? '<span class="ok">✓</span>' : '<span class="bad">missing</span>'}${found(i.col+'_amend') ? '' : ' <span style="color:var(--muted)">(no amend)</span>'}</td></tr>`).join('')}
+    </tbody></table></div>`;
+  return `<div class="grid g-12">
+    <div class="card"><h2>Import REDCap data</h2>
+      <p class="desc">In REDCap: <b>Data Exports → All data → CSV / Microsoft Excel (raw data)</b>, then drop the file here. Labelled exports (e.g. “Validated with amendment”, country names) work too. Everything runs in your browser — nothing is uploaded.</p>
+      <div class="drop" id="drop"><div style="font-size:30px">📄</div><h3>Drop the CSV here</h3><p>or choose a file from your computer</p><button class="btn" data-act="pick">Choose CSV file</button></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn sec sm" data-act="dlSample">⬇ Download sample CSV (expected format)</button>
+        <button class="btn sec sm" data-act="loadSample">Load sample data</button>
+        <button class="btn ghost sm" data-act="clearData">Remove imported data</button></div>
+      <p class="desc" style="margin-top:12px">Imported data is kept in this browser (local storage) so a refresh does not lose it. Other visitors do not see your import — to publish one dataset for everyone, commit a file named <code>redcap_export.csv</code> next to <code>index.html</code>.</p></div>
+    <div class="card"><h2>Current dataset</h2><dl class="kv" style="margin:10px 0 16px">
+      <dt>Source</dt><dd>${srcName}</dd><dt>File</dt><dd>${esc(m.name || '—')}</dd><dt>Loaded</dt><dd>${m.at ? new Date(m.at).toLocaleString() : '—'}</dd></dl>${qa}</div></div>
+    <div class="grid g-21">
+    <div class="card"><h2>Settings</h2><p class="desc">Saved in this browser.</p><div style="display:flex;gap:16px;flex-wrap:wrap">
+      <label class="fld">Expected Member States<input type="number" min="1" max="200" data-set="expected" value="${S.settings.expected}"></label>
+      <label class="fld">High consensus ≥ (%)<input type="number" min="1" max="100" data-set="high" value="${S.settings.high}"></label>
+      <label class="fld">Substantial support ≥ (%)<input type="number" min="1" max="99" data-set="sub" value="${S.settings.sub}"></label></div>
+      <p class="desc" style="margin-top:12px">“Expected Member States” is the participation denominator (default 55 AU Member States). Thresholds follow the suggested bands (80 / 60) and are subject to approval.</p>
+      <button class="btn ghost sm" data-act="clearReg">Clear register edits</button></div>
+    <div class="card"><h2>Calculation methodology</h2><ul class="meth" style="margin:8px 0 0;padding-left:18px">
+      <li><b>Provision %</b> = Member States choosing a response ÷ Member States with a recorded decision for that provision × 100.</li>
+      <li><b>Overall / section distribution</b> = decisions in a category ÷ total recorded decisions (all 17 items / the section).</li>
+      <li><b>Full-document endorsement</b> = Member States with “Validated” on all 17 ÷ Member States with complete responses × 100.</li>
+      <li><b>Combined support</b> = Validated % + Validated with amendment %, reported separately from unconditional validation.</li>
+      <li>Missing responses are reported separately and excluded from denominators. One consolidated submission is kept per Member State (the most recent).</li></ul></div></div>
+    <div class="card" style="margin-top:16px"><h2>Data dictionary mapping</h2><p class="desc">How REDCap variables are read. ✓ = column present in the last import.</p>${map}</div>`;
+}
+
+/* =====================================================================
+   7. Render + drawer
+   ===================================================================== */
+const VIEWS = { exec:viewExec, matrix:viewMatrix, states:viewStates, amend:viewAmend, register:viewRegister, data:viewData };
+
+function render(keepScroll){
+  const y = window.scrollY;
+  $('#tabs').innerHTML = TABS.map(([k,l]) => `<button class="tab" role="tab" data-act="tab" data-v="${k}" aria-selected="${S.ui.tab===k}">${l}${k==='amend'?`<span class="cnt">${S.stats.comments.length}</span>`:''}${k==='states'?`<span class="cnt">${S.stats.N}</span>`:''}</button>`).join('');
+  $('#view').innerHTML = (VIEWS[S.ui.tab] || viewExec)();
+  const m = S.meta || {};
+  const srcTxt = m.source === 'import' ? `Imported: ${m.name || 'file'}` : m.source === 'repo' ? 'Shared REDCap export' : 'Sample data';
+  $('#srcTxt').textContent = srcTxt;
+  $('#srcChip').classList.toggle('live', m.source !== 'sample');
+  $('#banner').innerHTML = m.source === 'sample'
+    ? `<div class="banner"><div class="banner-in"><span>⚠ <b>Sample data.</b> The figures below are illustrative (modelled on the validation form) — they are not workshop results.</span><button class="btn sm" data-act="pick">Import your REDCap CSV</button></div></div>` : '';
+  $('#foot').innerHTML = `Africa CDC · African Continental Health Data Governance Framework validation · Percentages exclude missing responses; one consolidated submission per Member State. Built from REDCap form <code>achdgf_member_state_validation</code>.`;
+  if (keepScroll) window.scrollTo(0, y);
+}
+
+function itemDrawer(code){
+  const i = S.stats.items.find(x => x.code === code); if (!i) return;
+  const sec = SECTIONS[i.sec];
+  const group = (k, label) => {
+    const cs = i.comments.filter(c => c.dec === k);
+    if (k === 'V') return i.who.V.length ? `<h4>${label} (${i.who.V.length})</h4><div class="chips">${i.who.V.map(s => `<button class="pill v" data-act="state" data-s="${esc(s)}">${esc(s)}</button>`).join('')}</div>` : '';
+    return cs.length ? `<h4>${label} (${cs.length})</h4>${cs.map(c => `<div class="cm ${k==='N'?'n':''}"><div class="cm-h"><button class="pill" data-act="state" data-s="${esc(c.state)}"><b>${esc(c.state)}</b></button></div><p>${c.text ? esc(c.text) : '<i style="color:var(--muted)">No amendment text provided.</i>'}</p>${c.rat ? `<p style="margin-top:6px;color:var(--muted);font-size:12.5px"><b>Rationale / country considerations:</b> ${esc(c.rat)}</p>` : ''}</div>`).join('')}` : '';
+  };
+  openDrawer(`<div class="dr-h"><div><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#F0DCA8;font-weight:700">${sec.name}</div><h3>${i.code} — ${esc(i.title)}</h3></div><button class="x" data-act="closeDrawer" aria-label="Close">✕</button></div>
+    <div class="dr-b"><span class="badge ${CLS[i.cls].b}">${CLS[i.cls].badge}</span>
+    <div class="mini-k"><div class="v"><b>${i.V}</b><span>Validated<br>${fp(i.pV)}</span></div><div class="a"><b>${i.A}</b><span>Amendment<br>${fp(i.pA)}</span></div><div class="n"><b>${i.N}</b><span>Not validated<br>${fp(i.pN)}</span></div><div><b>${i.missing}</b><span>Missing<br>&nbsp;</span></div></div>
+    ${stack(i.V,i.A,i.N)}<div class="note">Combined support <b>${fp(i.pC)}</b> · unconditional <b>${fp(i.pV)}</b> · based on ${i.n} recorded decision${i.n===1?'':'s'}.</div>
+    ${group('N','Not validated')}${group('A','Validated with amendment')}${group('V','Validated')}
+    ${i.who.M.length ? `<h4>No response (${i.who.M.length})</h4><div class="chips">${i.who.M.map(s => `<button class="pill m" data-act="state" data-s="${esc(s)}">${esc(s)}</button>`).join('')}</div>` : ''}</div>`);
+}
+function stateDrawer(name){
+  const r = S.records.find(x => x.state === name); if (!r) return;
+  const c = { V:0, A:0, N:0, M:0 }; ITEMS.forEach(it => c[r.dec[it.code] || 'M']++);
+  const amended = ITEMS.filter(it => r.dec[it.code] === 'A' || r.dec[it.code] === 'N');
+  openDrawer(`<div class="dr-h"><div><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#F0DCA8;font-weight:700">Member State profile</div><h3>${esc(r.state)}</h3></div><button class="x" data-act="closeDrawer" aria-label="Close">✕</button></div>
+    <div class="dr-b"><dl class="kv" style="grid-template-columns:130px 1fr"><dt>Delegation</dt><dd>${esc(r.delegation||'—')}</dd><dt>Workshop date</dt><dd>${esc(r.date||'—')}</dd><dt>Record</dt><dd>${esc(r.id)}</dd><dt>REDCap form status</dt><dd>${esc(r.form)}</dd><dt>Submitted</dt><dd>${esc(r.tsRaw||'—')}</dd></dl>
+    <div class="mini-k"><div class="v"><b>${c.V}</b><span>Validated</span></div><div class="a"><b>${c.A}</b><span>Amendment</span></div><div class="n"><b>${c.N}</b><span>Not validated</span></div><div><b>${c.M}</b><span>Missing</span></div></div>
+    <h4>Decisions</h4><div class="chips">${ITEMS.map(it => { const d = r.dec[it.code]; return `<button class="pill ${d?DEC[d].cls:'m'}" data-act="item" data-code="${it.code}" ${tip(`${it.code} — ${it.title}`)}>${it.code} ${d?DEC[d].glyph:'·'}</button>`; }).join('')}</div>
+    ${amended.length ? `<h4>Proposed amendments / reasons for non-validation</h4>${amended.map(it => `<div class="cm ${r.dec[it.code]==='N'?'n':''}"><div class="cm-h"><button class="pill" data-act="item" data-code="${it.code}"><b>${it.code}</b> ${esc(it.title)}</button>${decBadge(r.dec[it.code])}</div><p>${r.am[it.code] ? esc(r.am[it.code]) : '<i style="color:var(--muted)">No amendment text provided.</i>'}</p></div>`).join('')}` : ''}
+    ${r.rat ? `<h4>Rationale / country-specific considerations</h4><div class="cm"><p>${esc(r.rat)}</p></div>` : ''}
+    ${r.obs ? `<h4>Overall observations for plenary</h4><div class="cm"><p>${esc(r.obs)}</p></div>` : ''}</div>`);
+}
+let lastFocus = null;
+function openDrawer(html){
+  const d = $('#drawer'); lastFocus = document.activeElement;
+  d.innerHTML = html; d.classList.add('on'); $('#ov').classList.add('on'); d.setAttribute('aria-hidden','false');
+  d.querySelector('.dr-b').scrollTop = 0; const x = d.querySelector('.x'); if (x) x.focus();
+}
+function closeDrawer(){
+  $('#drawer').classList.remove('on'); $('#ov').classList.remove('on'); $('#drawer').setAttribute('aria-hidden','true');
+  if (lastFocus && document.contains(lastFocus)) try { lastFocus.focus(); } catch(e){}
+}
+
+/* =====================================================================
+   8. Data loading
+   ===================================================================== */
+function applyCSV(text, meta){
+  const built = buildRecords(parseCSV(text));
+  S.records = built.records; S.report = built.report;
+  S.meta = Object.assign({ at:Date.now() }, meta);
+  if (S.ui.country && !S.records.some(r => r.state === S.ui.country)) S.ui.country = '';
+  compute();
+}
+async function init(){
+  let loaded = false;
+  const stored = jget(K.data, null);
+  if (stored && stored.csv){
+    try { applyCSV(stored.csv, stored.meta || { source:'import', name:'imported file' }); loaded = true; }
+    catch(e){ LS.del(K.data); }
+  }
+  if (!loaded){
+    try {
+      const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 4000);
+      const res = await fetch('redcap_export.csv', { cache:'no-store', signal:ctl.signal }); clearTimeout(to);
+      if (res.ok){ const t = await res.text(); if (t.trim().length > 20){ applyCSV(t, { source:'repo', name:'redcap_export.csv' }); loaded = true; } }
+    } catch(e){}
+  }
+  if (!loaded) applyCSV(SAMPLE_CSV, { source:'sample', name:'sample_redcap_export.csv' });
+  render();
+}
+function importText(text, name){
+  try {
+    applyCSV(text, { source:'import', name });
+    const ok = LS.set(K.data, JSON.stringify({ csv:text, meta:S.meta }));
+    S.ui.tab = S.ui.tab === 'data' ? 'data' : S.ui.tab; render();
+    toast(`Imported ${S.report.rowsRead} row${S.report.rowsRead===1?'':'s'} → ${S.stats.N} Member States.` + (S.report.dupes.length ? ` ${S.report.dupes.length} duplicate(s) resolved.` : ''));
+    if (!ok) toast('This browser blocked storage, so the data will be lost on refresh. Re-import after reloading.', 'warn');
+  } catch(err){ toast(err.message || 'Could not read that file.', 'error'); }
+}
+function importFile(f){
+  if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => importText(String(rd.result), f.name);
+  rd.onerror = () => toast('Could not read the file.', 'error');
+  rd.readAsText(f, 'utf-8');
+}
+
+/* =====================================================================
+   9. Events
+   ===================================================================== */
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-act]'); if (!t) return;
+  const a = t.dataset.act, v = t.dataset.v;
+  switch (a){
+    case 'tab': S.ui.tab = v; saveUI(); render(); window.scrollTo(0,0); break;
+    case 'clearCountry': S.ui.country=''; saveUI(); compute(); render(true); break;
+    case 'section': S.ui.section = v; saveUI(); render(true); break;
+    case 'item': itemDrawer(t.dataset.code); break;
+    case 'cell': itemDrawer(t.dataset.code); break;
+    case 'state': stateDrawer(t.dataset.s); break;
+    case 'closeDrawer': closeDrawer(); break;
+    case 'sort': { const k = t.dataset.k; if (S.ui.sortKey === k) S.ui.sortDir *= -1; else { S.ui.sortKey = k; S.ui.sortDir = k === 'order' || k === 'title' ? 1 : -1; } render(true); break; }
+    case 'rank': S.ui.rank = v; render(true); break;
+    case 'hmSort': S.ui.hmSort = v; render(true); break;
+    case 'theme': S.ui.amTheme = S.ui.amTheme === v ? 'ALL' : v; render(true); break;
+    case 'amReset': Object.assign(S.ui, { amItem:'ALL', amDec:'ALL', amTheme:'ALL', amQ:'' }); render(true); break;
+    case 'pick': $('#file').value = ''; $('#file').click(); break;
+    case 'loadSample': importSampleLocal(); break;
+    case 'dlSample': download('sample_redcap_export.csv', SAMPLE_CSV); break;
+    case 'clearData': confirmDlg('Remove imported data?', 'This deletes the data stored in this browser and returns the dashboard to the shared/sample dataset. Your REDCap data is not affected.', 'Remove', () => { LS.del(K.data); init(); toast('Imported data removed.'); }); break;
+    case 'clearReg': confirmDlg('Clear register edits?', 'Owner, resolution status and final decision entries saved in this browser will be erased.', 'Clear', () => { S.register = {}; LS.del(K.register); render(true); toast('Register edits cleared.'); }); break;
+    case 'dlgYes': { const d = $('#dlg'); const f = d._ok; d.close(); f && f(); break; }
+    case 'dlgNo': $('#dlg').close(); break;
+    case 'dlRegister': exportRegister(); break;
+  }
+});
+function importSampleLocal(){
+  LS.del(K.data); applyCSV(SAMPLE_CSV, { source:'sample', name:'sample_redcap_export.csv' }); render(true); toast('Sample data loaded.');
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape'){ if ($('#drawer').classList.contains('on')) closeDrawer(); }
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('tr[data-act], g[data-act]')){ e.preventDefault(); e.target.click(); }
+});
+$('#file').addEventListener('change', e => importFile(e.target.files[0]));
+document.addEventListener('dragover', e => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')){ e.preventDefault(); const d = $('#drop'); d && d.classList.add('on'); } });
+document.addEventListener('dragleave', e => { if (!e.relatedTarget){ const d = $('#drop'); d && d.classList.remove('on'); } });
+document.addEventListener('drop', e => { if (e.dataTransfer && e.dataTransfer.files.length){ e.preventDefault(); const d = $('#drop'); d && d.classList.remove('on'); importFile(e.dataTransfer.files[0]); } });
+
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset.reg){
+    const c = t.dataset.reg; S.register[c] = Object.assign(S.register[c] || {}, { [t.dataset.f]: t.value }); saveRegister(); return;
+  }
+  const k = t.dataset.in; if (!k) return;
+  if (t.type === 'checkbox') return;
+  S.ui[k] = t.value;
+  if (k === 'hmQ') $('#hmBody').innerHTML = hmRows();
+  if (k === 'amQ') $('#amList').innerHTML = commentCards(filteredComments());
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.reg){ const c = t.dataset.reg; S.register[c] = Object.assign(S.register[c] || {}, { [t.dataset.f]: t.value }); saveRegister(); return; }
+  if (t.dataset.set){
+    let v = Math.round(+t.value); if (!isFinite(v) || v < 1) v = 1;
+    S.settings[t.dataset.set] = v;
+    if (S.settings.sub >= S.settings.high){ S.settings.sub = Math.max(1, S.settings.high - 1); }
+    saveSettings(); compute(); render(true); return;
+  }
+  const k = t.dataset.in; if (!k) return;
+  if (t.type === 'checkbox') S.ui[k] = t.checked; else S.ui[k] = t.value;
+  if (k === 'country'){ saveUI(); compute(); }
+  render(true);
+});
+
+function exportRegister(){
+  const rows = [['Code','Provision','Consensus band','Unconditional validation %','Member States (amendment / not validated)','Proposed wording','Rationale / country-specific considerations','Owner','Resolution status','Final decision']];
+  S.stats.items.forEach(i => {
+    const reg = S.register[i.code] || {};
+    rows.push([i.code, i.title, CLS[i.cls].label, i.pV == null ? '' : i.pV.toFixed(1),
+      i.comments.map(c => `${c.state} (${DEC[c.dec].short})`).join('; '),
+      i.comments.filter(c => c.text).map(c => `${c.state}: ${c.text}`).join(' || '),
+      i.comments.filter(c => c.rat).map(c => `${c.state}: ${c.rat}`).join(' || '),
+      reg.owner || '', reg.status || (i.cls === 'low' ? 'Referred to plenary' : 'Open'), reg.final || '']);
+  });
+  download('achdgf_resolution_register.csv', csvOut(rows));
+}
+
+/* tooltip */
+const tipEl = $('#tip');
+document.addEventListener('mouseover', e => {
+  const t = e.target.closest('[data-tip]'); if (!t){ tipEl.classList.remove('on'); return; }
+  tipEl.textContent = t.dataset.tip; tipEl.classList.add('on');
+});
+document.addEventListener('mousemove', e => {
+  if (!tipEl.classList.contains('on')) return;
+  const w = tipEl.offsetWidth, h = tipEl.offsetHeight;
+  let x = e.clientX + 14, y = e.clientY + 16;
+  if (x + w > innerWidth - 8) x = e.clientX - w - 14;
+  if (y + h > innerHeight - 8) y = e.clientY - h - 14;
+  tipEl.style.left = x + 'px'; tipEl.style.top = y + 'px';
+});
+document.addEventListener('scroll', () => tipEl.classList.remove('on'), true);
+
+init();
+})();
+</script>
+</body>
+</html>
